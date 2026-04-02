@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Twin Stars Gaming World</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <!-- Main Menu -->
+    <div id="main-menu" class="screen active">
+        <div class="stars-bg"></div>
+        <h1 class="title-bounce">Twin Stars Gaming World</h1>
+        <p class="subtitle">Pick a game to play!</p>
+        <div class="game-grid">
+            <button class="game-card color-match" onclick="startGame('color-match')">
+                <div class="card-icon">🎨</div>
+                <div class="card-title">Color Match</div>
+                <div class="card-desc">Match the colors!</div>
+            </button>
+            <button class="game-card animal-sounds" onclick="startGame('animal-sounds')">
+                <div class="card-icon">🐾</div>
+                <div class="card-title">Animal Friends</div>
+                <div class="card-desc">Find the animals!</div>
+            </button>
+            <button class="game-card shape-sort" onclick="startGame('shape-sort')">
+                <div class="card-icon">🔷</div>
+                <div class="card-title">Shape Party</div>
+                <div class="card-desc">Match the shapes!</div>
+            </button>
+            <button class="game-card bubble-pop" onclick="startGame('bubble-pop')">
+                <div class="card-icon">🫧</div>
+                <div class="card-title">Bubble Pop</div>
+                <div class="card-desc">Pop the bubbles!</div>
+            </button>
+            <button class="game-card memory-game" onclick="startGame('memory')">
+                <div class="card-icon">🧠</div>
+                <div class="card-title">Memory Match</div>
+                <div class="card-desc">Find the pairs!</div>
+            </button>
+            <button class="game-card counting-game" onclick="startGame('counting')">
+                <div class="card-icon">🔢</div>
+                <div class="card-title">Count & Play</div>
+                <div class="card-desc">Learn to count!</div>
+            </button>
+        </div>
+        <div class="player-select">
+            <button class="player-btn star-1 active" onclick="selectPlayer(1)">⭐ Player 1</button>
+            <button class="player-btn star-2" onclick="selectPlayer(2)">🌟 Player 2</button>
+        </div>
+    </div>
+
+    <!-- Color Match Game -->
+    <div id="color-match-screen" class="screen game-screen">
+        <div class="game-header">
+            <button class="back-btn" onclick="goHome()">🏠</button>
+            <div class="score-display">Stars: <span id="color-score">0</span> ⭐</div>
+            <div class="game-prompt" id="color-prompt">Tap the <span id="target-color-name">RED</span> one!</div>
+        </div>
+        <div class="game-area" id="color-game-area"></div>
+        <div id="color-celebration" class="celebration hidden"></div>
+    </div>
+
+    <!-- Animal Sounds Game -->
+    <div id="animal-sounds-screen" class="screen game-screen">
+        <div class="game-header">
+            <button class="back-btn" onclick="goHome()">🏠</button>
+            <div class="score-display">Stars: <span id="animal-score">0</span> ⭐</div>
+            <div class="game-prompt" id="animal-prompt">Which animal says <span id="animal-sound-text">"Moo"</span>?</div>
+        </div>
+        <div class="game-area" id="animal-game-area"></div>
+        <div id="animal-celebration" class="celebration hidden"></div>
+    </div>
+
+    <!-- Shape Sort Game -->
+    <div id="shape-sort-screen" class="screen game-screen">
+        <div class="game-header">
+            <button class="back-btn" onclick="goHome()">🏠</button>
+            <div class="score-display">Stars: <span id="shape-score">0</span> ⭐</div>
+            <div class="game-prompt">Tap the shape that matches!</div>
+        </div>
+        <div class="shape-target" id="shape-target"></div>
+        <div class="game-area" id="shape-game-area"></div>
+        <div id="shape-celebration" class="celebration hidden"></div>
+    </div>
+
+    <!-- Bubble Pop Game -->
+    <div id="bubble-pop-screen" class="screen game-screen">
+        <div class="game-header">
+            <button class="back-btn" onclick="goHome()">🏠</button>
+            <div class="score-display">Pops: <span id="bubble-score">0</span> 🫧</div>
+            <div class="game-prompt">Pop all the bubbles!</div>
+        </div>
+        <div class="game-area bubble-area" id="bubble-game-area"></div>
+    </div>
+
+    <!-- Memory Game -->
+    <div id="memory-screen" class="screen game-screen">
+        <div class="game-header">
+            <button class="back-btn" onclick="goHome()">🏠</button>
+            <div class="score-display">Pairs: <span id="memory-score">0</span> / <span id="memory-total">6</span></div>
+            <div class="game-prompt">Find the matching pairs!</div>
+        </div>
+        <div class="game-area memory-area" id="memory-game-area"></div>
+        <div id="memory-celebration" class="celebration hidden"></div>
+    </div>
+
+    <!-- Counting Game -->
+    <div id="counting-screen" class="screen game-screen">
+        <div class="game-header">
+            <button class="back-btn" onclick="goHome()">🏠</button>
+            <div class="score-display">Stars: <span id="counting-score">0</span> ⭐</div>
+            <div class="game-prompt">How many <span id="counting-item">🍎</span> do you see?</div>
+        </div>
+        <div class="counting-display" id="counting-display"></div>
+        <div class="game-area counting-choices" id="counting-choices"></div>
+        <div id="counting-celebration" class="celebration hidden"></div>
+    </div>
+
+    <!-- Celebration Overlay -->
+    <div id="celebration-overlay" class="celebration-overlay hidden">
+        <div class="celebration-content">
+            <div class="celebration-emoji">🎉</div>
+            <div class="celebration-text">Amazing!</div>
+            <div class="celebration-stars">⭐⭐⭐</div>
+        </div>
+    </div>
+
+    <script src="js/sounds.js"></script>
+    <script src="js/color-match.js"></script>
+    <script src="js/animal-sounds.js"></script>
+    <script src="js/shape-sort.js"></script>
+    <script src="js/bubble-pop.js"></script>
+    <script src="js/memory.js"></script>
+    <script src="js/counting.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

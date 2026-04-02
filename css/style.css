@@ -1,0 +1,455 @@
+/* === Reset & Base === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+body {
+    font-family: 'Segoe UI', 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* === Screens === */
+.screen {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* === Main Menu === */
+#main-menu {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #ffd452 100%);
+    justify-content: center;
+    padding: 20px;
+    gap: 15px;
+    overflow-y: auto;
+}
+
+.title-bounce {
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    color: white;
+    text-shadow: 3px 3px 0px rgba(0,0,0,0.2), 0 0 20px rgba(255,255,255,0.5);
+    text-align: center;
+    animation: titleBounce 2s ease-in-out infinite;
+}
+
+.subtitle {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    color: rgba(255,255,255,0.9);
+    text-align: center;
+}
+
+/* === Game Grid === */
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+    max-width: 700px;
+    width: 100%;
+    padding: 10px;
+}
+
+.game-card {
+    border: none;
+    border-radius: 25px;
+    padding: 20px 15px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    min-height: 140px;
+    justify-content: center;
+}
+
+.game-card:hover, .game-card:active {
+    transform: scale(1.08);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+}
+
+.game-card:active {
+    transform: scale(0.95);
+}
+
+.color-match { background: linear-gradient(135deg, #FF6B6B, #FF8E53); }
+.animal-sounds { background: linear-gradient(135deg, #4ECDC4, #44B09E); }
+.shape-sort { background: linear-gradient(135deg, #667eea, #764ba2); }
+.bubble-pop { background: linear-gradient(135deg, #a8e6cf, #88d8b0); }
+.memory-game { background: linear-gradient(135deg, #ffeaa7, #fdcb6e); }
+.counting-game { background: linear-gradient(135deg, #fd79a8, #e84393); }
+
+.card-icon {
+    font-size: 3rem;
+    line-height: 1;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.card-desc {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.85);
+}
+
+/* === Player Select === */
+.player-select {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.player-btn {
+    padding: 12px 25px;
+    border: 3px solid white;
+    border-radius: 50px;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.player-btn.active {
+    background: white;
+    color: #f5576c;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+/* === Game Screens === */
+.game-screen {
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+.game-header {
+    width: 100%;
+    padding: 15px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+}
+
+.back-btn {
+    font-size: 2rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    transition: transform 0.2s;
+    padding: 5px;
+}
+
+.back-btn:hover { transform: scale(1.2); }
+
+.score-display {
+    font-size: 1.3rem;
+    color: #ffd700;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.game-prompt {
+    width: 100%;
+    text-align: center;
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    color: white;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.game-prompt span {
+    font-weight: 900;
+    font-size: 110%;
+}
+
+/* === Game Area === */
+.game-area {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* === Color Match Game === */
+.color-circle {
+    width: clamp(80px, 20vw, 130px);
+    height: clamp(80px, 20vw, 130px);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3), inset 0 -5px 15px rgba(0,0,0,0.2), inset 0 5px 15px rgba(255,255,255,0.2);
+    border: 4px solid rgba(255,255,255,0.3);
+}
+
+.color-circle:active {
+    transform: scale(0.85);
+}
+
+/* === Animal Game === */
+.animal-btn {
+    width: clamp(100px, 25vw, 150px);
+    height: clamp(100px, 25vw, 150px);
+    border-radius: 25px;
+    border: 4px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.1);
+    cursor: pointer;
+    font-size: clamp(3rem, 8vw, 5rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.animal-btn:active {
+    transform: scale(0.9);
+}
+
+/* === Shape Game === */
+.shape-target {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.shape-item {
+    cursor: pointer;
+    transition: transform 0.2s;
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+}
+
+.shape-item:active {
+    transform: scale(0.85);
+}
+
+.target-shape {
+    padding: 15px 30px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    border: 3px dashed rgba(255,255,255,0.4);
+}
+
+/* === Bubble Pop === */
+.bubble-area {
+    position: relative;
+    overflow: hidden;
+}
+
+.bubble {
+    position: absolute;
+    border-radius: 50%;
+    cursor: pointer;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(100,200,255,0.4));
+    border: 2px solid rgba(255,255,255,0.5);
+    box-shadow: 0 0 20px rgba(100,200,255,0.3), inset 0 0 20px rgba(255,255,255,0.2);
+    animation: floatUp linear forwards;
+    transition: transform 0.1s;
+}
+
+.bubble:active {
+    transform: scale(1.3);
+}
+
+/* === Memory Game === */
+.memory-area {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 500px;
+    gap: 10px;
+    padding: 15px;
+}
+
+.memory-card {
+    aspect-ratio: 1;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s;
+    transform-style: preserve-3d;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border: 3px solid rgba(255,255,255,0.2);
+}
+
+.memory-card.flipped {
+    background: white;
+    transform: rotateY(180deg);
+}
+
+.memory-card.matched {
+    background: #4ECDC4;
+    transform: rotateY(180deg) scale(0.95);
+    opacity: 0.8;
+    cursor: default;
+}
+
+.memory-card .card-face {
+    backface-visibility: hidden;
+}
+
+.memory-card:not(.flipped):not(.matched) .card-face {
+    display: none;
+}
+
+.memory-card:not(.flipped):not(.matched)::after {
+    content: '⭐';
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+}
+
+/* === Counting Game === */
+.counting-display {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px;
+    min-height: 120px;
+    align-items: center;
+}
+
+.counting-obj {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    animation: popIn 0.3s ease-out backwards;
+}
+
+.counting-choices {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    padding: 20px;
+    flex: unset !important;
+}
+
+.count-btn {
+    width: clamp(70px, 18vw, 100px);
+    height: clamp(70px, 18vw, 100px);
+    border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.4);
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+    color: white;
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.count-btn:active {
+    transform: scale(0.9);
+}
+
+/* === Celebrations === */
+.celebration-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.celebration-overlay.hidden {
+    display: none;
+}
+
+.celebration-content {
+    text-align: center;
+    animation: celebrationPop 0.5s ease-out;
+}
+
+.celebration-emoji {
+    font-size: 5rem;
+    animation: celebSpin 1s ease-in-out;
+}
+
+.celebration-text {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 900;
+    text-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    margin: 15px 0;
+}
+
+.celebration-stars {
+    font-size: 2rem;
+    animation: starPulse 0.5s ease-in-out infinite alternate;
+}
+
+/* === Feedback Animations === */
+.correct-flash {
+    animation: correctFlash 0.5s ease-out;
+}
+
+.wrong-shake {
+    animation: wrongShake 0.4s ease-out;
+}
+
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    z-index: 999;
+    animation: confettiFall 2s ease-out forwards;
+    pointer-events: none;
+}
+
+/* === Responsive === */
+@media (max-width: 400px) {
+    .game-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .game-card {
+        padding: 15px 10px;
+        min-height: 120px;
+    }
+    .memory-area {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .game-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

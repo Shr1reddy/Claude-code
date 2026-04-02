@@ -1,0 +1,119 @@
+/* === Keyframe Animations === */
+
+@keyframes titleBounce {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-10px) rotate(1deg); }
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) scale(1); opacity: 0; }
+}
+
+@keyframes popIn {
+    0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+    60% { transform: scale(1.2) rotate(10deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes correctFlash {
+    0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.8); }
+    50% { box-shadow: 0 0 40px 20px rgba(76, 175, 80, 0.4); transform: scale(1.15); }
+    100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); transform: scale(1); }
+}
+
+@keyframes wrongShake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-15px); }
+    40% { transform: translateX(15px); }
+    60% { transform: translateX(-10px); }
+    80% { transform: translateX(10px); }
+}
+
+@keyframes celebrationPop {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes celebSpin {
+    0% { transform: rotate(0deg) scale(0.5); }
+    50% { transform: rotate(180deg) scale(1.3); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes starPulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.2); }
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(0) rotate(0deg) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes wobble {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes rainbow {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Bubble-specific animation handled via JS duration */
+@keyframes bubblePop {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+    100% { transform: scale(0); opacity: 0; }
+}
+
+.bubble-popping {
+    animation: bubblePop 0.3s ease-out forwards !important;
+}
+
+/* Card flip animation */
+.memory-card {
+    perspective: 1000px;
+}
+
+/* Floating particles in background */
+.stars-bg::before,
+.stars-bg::after {
+    content: '✨';
+    position: fixed;
+    font-size: 1.5rem;
+    animation: sparkle 2s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.stars-bg::before {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.stars-bg::after {
+    top: 20%;
+    right: 15%;
+    animation-delay: 1s;
+}
