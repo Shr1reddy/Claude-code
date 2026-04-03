@@ -1,0 +1,178 @@
+/* ================================================
+   ANIMATIONS — Smooth Framer-quality motion
+   ================================================ */
+
+/* === Orb Float === */
+@keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(30px, -40px) scale(1.05); }
+    50% { transform: translate(-20px, 20px) scale(0.95); }
+    75% { transform: translate(40px, 10px) scale(1.02); }
+}
+
+/* === Scroll Pulse === */
+@keyframes scrollPulse {
+    0%, 100% { opacity: 1; transform: scaleY(1); }
+    50% { opacity: 0.3; transform: scaleY(0.6); transform-origin: top; }
+}
+
+/* === Marquee === */
+@keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+/* === Fade Slide Up === */
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* === Typing Dots === */
+@keyframes typingDot {
+    0%, 100% { opacity: 0.3; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-3px); }
+}
+
+/* === Scan Move === */
+@keyframes scanMove {
+    0%, 100% { top: 30%; }
+    50% { top: 70%; }
+}
+
+/* === Blink === */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* === Pulse === */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+/* === Count Up (handled via JS) === */
+
+/* === Reveal Animations === */
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-child {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-child.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger children */
+.reveal-child:nth-child(1) { transition-delay: 0.1s; }
+.reveal-child:nth-child(2) { transition-delay: 0.2s; }
+.reveal-child:nth-child(3) { transition-delay: 0.3s; }
+.reveal-child:nth-child(4) { transition-delay: 0.4s; }
+
+/* === Skill Pill Hover Glow === */
+.skill-pill {
+    position: relative;
+    overflow: hidden;
+}
+
+.skill-pill::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(108,92,231,0.15), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.skill-pill:hover::before {
+    opacity: 1;
+}
+
+/* === Card Spotlight Effect === */
+.project-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+        600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+        rgba(108, 92, 231, 0.06),
+        transparent 40%
+    );
+    opacity: 0;
+    transition: opacity 0.5s;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.project-card:hover::before {
+    opacity: 1;
+}
+
+/* === Smooth page load === */
+body {
+    animation: pageLoad 0.8s ease-out;
+}
+
+@keyframes pageLoad {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* === Selection color === */
+::selection {
+    background: rgba(108, 92, 231, 0.3);
+    color: #f5f5f7;
+}
+
+/* === Scrollbar === */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--text-tertiary);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* === Focus visible === */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+/* === Reduced motion === */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+    .reveal-child { opacity: 1; transform: none; }
+}
