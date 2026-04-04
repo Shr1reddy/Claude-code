@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX Case Study Builder — 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ── Toolbar ── -->
+<header class="toolbar" id="toolbar">
+  <div class="toolbar-left">
+    <span class="toolbar-logo">◆</span>
+    <span class="toolbar-title">UX Case Study Builder</span>
+  </div>
+  <div class="toolbar-actions">
+    <span class="autosave-badge" id="autosaveBadge">Saved</span>
+    <button class="tb-btn" onclick="saveProject()" title="Save"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg> Save</button>
+    <button class="tb-btn" onclick="loadProject()" title="Load"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg> Load</button>
+    <div class="tb-dropdown">
+      <button class="tb-btn tb-btn-primary" id="exportBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
+      <div class="dropdown-menu" id="exportMenu">
+        <button onclick="exportPDF()">Export as PDF</button>
+        <button onclick="exportWord()">Export as Word (.docx)</button>
+        <button onclick="exportJSON()">Export as JSON</button>
+      </div>
+    </div>
+    <button class="tb-btn tb-btn-ghost" onclick="togglePreview()" id="previewToggle" title="Preview mode">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Preview
+    </button>
+  </div>
+</header>
+
+<!-- ── Main Content ── -->
+<main class="case-study" id="caseStudy">
+
+  <!-- Cover / Hero -->
+  <section class="cs-section cs-cover" data-section="cover">
+    <div class="section-controls">
+      <span class="section-label">Cover</span>
+    </div>
+    <div class="cover-inner">
+      <div class="cover-meta">
+        <span class="editable chip" contenteditable="true" data-field="cover-type" data-placeholder="Product Design Case Study">Product Design Case Study</span>
+        <span class="editable chip" contenteditable="true" data-field="cover-year" data-placeholder="2026">2026</span>
+      </div>
+      <h1 class="editable cover-title" contenteditable="true" data-field="cover-title" data-placeholder="Your Project Title Goes Here">Redesigning the AI-Powered Health Dashboard</h1>
+      <p class="editable cover-subtitle" contenteditable="true" data-field="cover-subtitle" data-placeholder="A brief one-liner summarising your project and its impact.">How we improved patient engagement by 45% through intelligent personalization and trust-building design patterns.</p>
+      <div class="cover-details">
+        <div class="detail"><strong>Role</strong><span class="editable" contenteditable="true" data-field="cover-role" data-placeholder="Lead Product Designer">Lead Product Designer</span></div>
+        <div class="detail"><strong>Timeline</strong><span class="editable" contenteditable="true" data-field="cover-timeline" data-placeholder="8 weeks">8 weeks</span></div>
+        <div class="detail"><strong>Team</strong><span class="editable" contenteditable="true" data-field="cover-team" data-placeholder="2 designers, 3 engineers, 1 PM">2 designers, 3 engineers, 1 PM</span></div>
+        <div class="detail"><strong>Tools</strong><span class="editable" contenteditable="true" data-field="cover-tools" data-placeholder="Figma, Maze, Hotjar, Claude">Figma, Maze, Hotjar, Claude</span></div>
+      </div>
+      <div class="cover-image-slot image-upload-area" data-field="cover-image">
+        <div class="upload-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+          <span>Drop hero image or click to upload</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 — Problem Statement -->
+  <section class="cs-section" data-section="problem">
+    <div class="section-controls">
+      <span class="section-label">01</span>
+    </div>
+    <div class="section-inner">
+      <h2 class="editable section-title" contenteditable="true" data-field="problem-title" data-placeholder="Problem Statement">Problem Statement</h2>
+      <div class="editable section-body richtext" contenteditable="true" data-field="problem-body" data-placeholder="What problem are you solving? Who is affected? Why does it matter now?&#10;&#10;Describe the business context, user pain points, and what triggered this project.">
+        <p>Patients using the existing health dashboard reported low engagement (12% weekly active rate) and expressed distrust in AI-generated health recommendations. The legacy interface surfaced insights without context, leaving users confused about why specific actions were suggested.</p>
+        <p>With the rise of AI-native health tools in 2025-26, users expected transparency, personalization, and an empathetic tone — none of which the current product delivered.</p>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <span class="editable kpi-value" contenteditable="true" data-field="problem-kpi1-val" data-placeholder="12%">12%</span>
+          <span class="editable kpi-label" contenteditable="true" data-field="problem-kpi1-label" data-placeholder="Weekly Active Rate">Weekly Active Rate</span>
+        </div>
+        <div class="kpi-card">
+          <span class="editable kpi-value" contenteditable="true" data-field="problem-kpi2-val" data-placeholder="2.1★">2.1★</span>
+          <span class="editable kpi-label" contenteditable="true" data-field="problem-kpi2-label" data-placeholder="App Store Rating">App Store Rating</span>
+        </div>
+        <div class="kpi-card">
+          <span class="editable kpi-value" contenteditable="true" data-field="problem-kpi3-val" data-placeholder="68%">68%</span>
+          <span class="editable kpi-label" contenteditable="true" data-field="problem-kpi3-label" data-placeholder="Users ignoring AI tips">Users Ignoring AI Tips</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 — Research & Discovery -->
+  <section class="cs-section" data-section="research">
+    <div class="section-controls">
+      <span class="section-label">02</span>
+    </div>
+    <div class="section-inner">
+      <h2 class="editable section-title" contenteditable="true" data-field="research-title">Research &amp; Discovery</h2>
+      <div class="editable section-body richtext" contenteditable="true" data-field="research-body" data-placeholder="Describe your research methodology: user interviews, surveys, analytics review, competitive analysis, etc.">
+        <p>We conducted 15 in-depth user interviews, analysed 3 months of behavioural analytics, ran a competitive audit of 8 AI-health products, and synthesised findings into an affinity map.</p>
+      </div>
+      <div class="research-methods">
+        <div class="method-card">
+          <div class="method-icon">🎙️</div>
+          <h4 class="editable" contenteditable="true" data-field="method1-title">User Interviews</h4>
+          <p class="editable" contenteditable="true" data-field="method1-desc">15 interviews across 3 user segments (patients, caregivers, clinicians)</p>
+        </div>
+        <div class="method-card">
+          <div class="method-icon">📊</div>
+          <h4 class="editable" contenteditable="true" data-field="method2-title">Behavioural Analytics</h4>
+          <p class="editable" contenteditable="true" data-field="method2-desc">Funnel analysis, heatmaps, and session recordings over 3 months</p>
+        </div>
+        <div class="method-card">
+          <div class="method-icon">🔍</div>
+          <h4 class="editable" contenteditable="true" data-field="method3-title">Competitive Audit</h4>
+          <p class="editable" contenteditable="true" data-field="method3-desc">Deep-dive into 8 AI-health competitors and emerging design patterns</p>
+        </div>
+        <div class="method-card">
+          <div class="method-icon">🧠</div>
+          <h4 class="editable" contenteditable="true" data-field="method4-title">AI UX Heuristics</h4>
+          <p class="editable" contenteditable="true" data-field="method4-desc">Evaluated against 2026 AI transparency and explainability frameworks</p>
+        </div>
+      </div>
+      <div class="image-upload-area" data-field="research-image">
+        <div class="upload-placeholder">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+          <span>Drop affinity map, journey map, or research artifacts</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 — Key Insights -->
+  <section class="cs-section" data-section="insights">
+    <div class="section-controls">
+      <span class="section-label">03</span>
+    </div>
+    <div class="section-inner">
+      <h2 class="editable section-title" contenteditable="true" data-field="insights-title">Key Insights</h2>
+      <div class="editable section-body richtext" contenteditable="true" data-field="insights-body" data-placeholder="What did you learn? Summarise your top insights.">
+        <p>Three core themes emerged from our research:</p>
+      </div>
+      <div class="insight-cards">
+        <div class="insight-card">
+          <span class="insight-num">01</span>
+          <h4 class="editable" contenteditable="true" data-field="insight1-title">Trust Requires Transparency</h4>
+          <p class="editable" contenteditable="true" data-field="insight1-desc">Users need to understand WHY AI recommends something before they act on it. "Show me the evidence" was the #1 request.</p>
+        </div>
+        <div class="insight-card">
+          <span class="insight-num">02</span>
+          <h4 class="editable" contenteditable="true" data-field="insight2-title">Personalisation ≠ Complexity</h4>
+          <p class="editable" contenteditable="true" data-field="insight2-desc">Users want tailored insights but reject interfaces that feel overwhelming. Progressive disclosure is key.</p>
+        </div>
+        <div class="insight-card">
+          <span class="insight-num">03</span>
+          <h4 class="editable" contenteditable="true" data-field="insight3-title">Emotional Context Matters</h4>
+          <p class="editable" contenteditable="true" data-field="insight3-desc">Health data is deeply personal. The tone, timing, and framing of AI messages directly impacts engagement and trust.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 — Design Process -->
+  <section class="cs-section" data-section="process">
+    <div class="section-controls">
+      <span class="section-label">04</span>
+    </div>
+    <div class="section-inner">
+      <h2 class="editable section-title" contenteditable="true" data-field="process-title">Design Process</h2>
+      <div class="editable section-body richtext" contenteditable="true" data-field="process-body" data-placeholder="Walk through your design process: ideation, wireframes, iterations, prototyping.">
+        <p>We followed a double-diamond approach adapted for AI product design, with an emphasis on prototyping with real AI outputs early.</p>
+      </div>
+      <div class="process-timeline">
+        <div class="process-phase">
+          <div class="phase-marker"></div>
+          <h4 class="editable" contenteditable="true" data-field="phase1-title">Week 1–2: Explore</h4>
+          <p class="editable" contenteditable="true" data-field="phase1-desc">Stakeholder interviews, research synthesis, "How Might We" workshop, problem framing</p>
+        </div>
+        <div class="process-phase">
+          <div class="phase-marker"></div>
+          <h4 class="editable" contenteditable="true" data-field="phase2-title">Week 3–4: Define &amp; Ideate</h4>
+          <p class="editable" contenteditable="true" data-field="phase2-desc">User flows, information architecture, concept sketches, AI prompt prototyping</p>
+        </div>
+        <div class="process-phase">
+          <div class="phase-marker"></div>
+          <h4 class="editable" contenteditable="true" data-field="phase3-title">Week 5–6: Design &amp; Test</h4>
+          <p class="editable" contenteditable="true" data-field="phase3-desc">High-fidelity mockups, usability testing (3 rounds), accessibility audit</p>
+        </div>
+        <div class="process-phase">
+          <div class="phase-marker"></div>
+          <h4 class="editable" contenteditable="true" data-field="phase4-title">Week 7–8: Deliver &amp; Measure</h4>
+          <p class="editable" contenteditable="true" data-field="phase4-desc">Dev handoff, design QA, A/B tests, launch monitoring, iteration</p>
+        </div>
+      </div>
+      <div class="image-upload-area" data-field="process-image">
+        <div class="upload-placeholder">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+          <span>Drop wireframes, sketches, or process artifacts</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 — Solution / Final Design -->
+  <section class="cs-section" data-section="solution">
+    <div class="section-controls">
+      <span class="section-label">05</span>
+    </div>
+    <div class="section-inner">
+      <h2 class="editable section-title" contenteditable="true" data-field="solution-title">Solution — Final Design</h2>
+      <div class="editable section-body richtext" contenteditable="true" data-field="solution-body" data-placeholder="Present your final design solution. Highlight key screens, interactions, and design decisions.">
+        <p>The redesigned dashboard centers on three pillars: <strong>Explainable AI</strong>, <strong>Progressive Personalization</strong>, and <strong>Empathetic Communication</strong>. Every AI recommendation now includes a confidence level, source references, and a plain-language explanation.</p>
+      </div>
+      <div class="solution-gallery">
+        <div class="image-upload-area solution-img" data-field="solution-image1">
+          <div class="upload-placeholder">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+            <span>Screen 1 — Key screen</span>
+          </div>
+        </div>
+        <div class="image-upload-area solution-img" data-field="solution-image2">
+          <div class="upload-placeholder">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+            <span>Screen 2 — Key screen</span>
+          </div>
+        </div>
+        <div class="image-upload-area solution-img" data-field="solution-image3">
+          <div class="upload-placeholder">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+            <span>Screen 3 — Key screen</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 — AI-Specific Design Decisions (2026 section) -->
+  <section class="cs-section" data-section="ai-design">
+    <div class="section-controls">
+      <span class="section-label">06</span>
+    </div>
+    <div class="section-inner">
+      <h2 class="editable section-title" contenteditable="true" data-field="ai-title">AI Design Decisions</h2>
+      <p class="editable section-body" contenteditable="true" data-field="ai-body" data-placeholder="How did you design for AI? Explain trust patterns, error handling, confidence indicators, human-in-the-loop flows.">How we approached AI-specific UX challenges: trust calibration, graceful failure states, and keeping humans in control.</p>
+      <div class="ai-decisions">
+        <div class="ai-card">
+          <div class="ai-card-icon">🛡️</div>
+          <h4 class="editable" contenteditable="true" data-field="ai-dec1-title">Trust Calibration</h4>
+          <p class="editable" contenteditable="true" data-field="ai-dec1-desc">Confidence meters on every AI insight. Users see how certain the model is before acting on recommendations.</p>
+        </div>
+        <div class="ai-card">
+          <div class="ai-card-icon">🔄</div>
+          <h4 class="editable" contenteditable="true" data-field="ai-dec2-title">Human-in-the-Loop</h4>
+          <p class="editable" contenteditable="true" data-field="ai-dec2-desc">Users can override, correct, or dismiss AI suggestions. Every override improves model accuracy over time.</p>
+        </div>
+        <div class="ai-card">
+          <div class="ai-card-icon">⚠️</div>
+          <h4 class="editable" contenteditable="true" data-field="ai-dec3-title">Graceful Degradation</h4>
+          <p class="editable" contenteditable="true" data-field="ai-dec3-desc">When AI confidence is low or data insufficient, the UI shifts to manual mode rather than showing unreliable predictions.</p>
+        </div>
+        <div class="ai-card">
+          <div class="ai-card-icon">📖</div>
+          <h4 class="editable" contenteditable="true" data-field="ai-dec4-title">Explainability Layer</h4>
+          <p class="editable" contenteditable="true" data-field="ai-dec4-desc">"Why this recommendation?" expandable panel on every AI-generated card, citing data sources and reasoning chain.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 — Accessibility & Inclusive Design -->
+  <section class="cs-section" data-section="accessibility">
+    <div class="section-controls">
+      <span class="section-label">07</span>
+    </div>
+    <div class="section-inner">
+      <h2 class="editable section-title" contenteditable="true" data-field="a11y-title">Accessibility &amp; Inclusive Design</h2>
+      <div class="editable section-body richtext" contenteditable="true" data-field="a11y-body" data-placeholder="How did you ensure your design is accessible and inclusive? WCAG compliance, assistive tech testing, inclusive research.">
+        <p>We followed WCAG 2.2 AA standards, tested with screen readers (VoiceOver, NVDA), conducted sessions with users of varying abilities, and ensured the AI communication adapts reading level based on user preferences.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 — Results & Impact -->
+  <section class="cs-section" data-section="results">
+    <div class="section-controls">
+      <span class="section-label">08</span>
+    </div>
+    <div class="section-inner">
+      <h2 class="editable section-title" contenteditable="true" data-field="results-title">Results &amp; Impact</h2>
+      <div class="editable section-body richtext" contenteditable="true" data-field="results-body" data-placeholder="What was the measurable impact? Before vs. after metrics, user feedback, business outcomes.">
+        <p>The redesign launched as an A/B test to 50% of users. After 6 weeks, the results exceeded all targets:</p>
+      </div>
+      <div class="results-grid">
+        <div class="result-card positive">
+          <span class="editable result-before" contenteditable="true" data-field="result1-before">12%</span>
+          <span class="result-arrow">→</span>
+          <span class="editable result-after" contenteditable="true" data-field="result1-after">45%</span>
+          <span class="editable result-metric" contenteditable="true" data-field="result1-metric">Weekly Active Users</span>
+        </div>
+        <div class="result-card positive">
+          <span class="editable result-before" contenteditable="true" data-field="result2-before">2.1★</span>
+          <span class="result-arrow">→</span>
+          <span class="editable result-after" contenteditable="true" data-field="result2-after">4.6★</span>
+          <span class="editable result-metric" contenteditable="true" data-field="result2-metric">App Store Rating</span>
+        </div>
+        <div class="result-card positive">
+          <span class="editable result-before" contenteditable="true" data-field="result3-before">68%</span>
+          <span class="result-arrow">→</span>
+          <span class="editable result-after" contenteditable="true" data-field="result3-after">22%</span>
+          <span class="editable result-metric" contenteditable="true" data-field="result3-metric">AI Tip Dismissal Rate</span>
+        </div>
+        <div class="result-card positive">
+          <span class="editable result-before" contenteditable="true" data-field="result4-before">—</span>
+          <span class="result-arrow">→</span>
+          <span class="editable result-after" contenteditable="true" data-field="result4-after">$2.4M</span>
+          <span class="editable result-metric" contenteditable="true" data-field="result4-metric">Annual Revenue Impact</span>
+        </div>
+      </div>
+      <div class="testimonial-block">
+        <blockquote class="editable" contenteditable="true" data-field="results-quote" data-placeholder="Add a stakeholder or user quote about the impact.">"The new dashboard finally makes me feel in control of my health data. I actually trust the recommendations now because I can see exactly why they're being made."</blockquote>
+        <cite class="editable" contenteditable="true" data-field="results-cite" data-placeholder="— Name, Role">— Patient participant, Beta cohort</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 — Reflections & Learnings -->
+  <section class="cs-section" data-section="reflections">
+    <div class="section-controls">
+      <span class="section-label">09</span>
+    </div>
+    <div class="section-inner">
+      <h2 class="editable section-title" contenteditable="true" data-field="reflections-title">Reflections &amp; Learnings</h2>
+      <div class="editable section-body richtext" contenteditable="true" data-field="reflections-body" data-placeholder="What did you learn? What would you do differently? What are the next steps?">
+        <p><strong>What worked:</strong> Prototyping with real AI outputs early in the process revealed edge cases we would have missed otherwise. Involving clinicians as design partners was invaluable.</p>
+        <p><strong>What I'd do differently:</strong> Start A/B testing earlier in the process rather than waiting for a polished prototype. Ship-and-learn beats perfect-and-launch.</p>
+        <p><strong>Next steps:</strong> Expand the explainability patterns to the mobile app, introduce voice-based AI interactions, and explore multimodal health data visualisation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 — About the Designer -->
+  <section class="cs-section cs-footer-section" data-section="designer">
+    <div class="section-controls">
+      <span class="section-label">10</span>
+    </div>
+    <div class="section-inner designer-footer">
+      <div class="designer-info">
+        <h3 class="editable" contenteditable="true" data-field="designer-name" data-placeholder="Your Name">Shravan Parlapally</h3>
+        <p class="editable" contenteditable="true" data-field="designer-role" data-placeholder="AI Product Designer">AI Product Designer</p>
+        <p class="editable designer-bio" contenteditable="true" data-field="designer-bio" data-placeholder="A short bio about yourself.">Designing AI-powered products that people love and trust. Currently focused on the intersection of health-tech and responsible AI.</p>
+      </div>
+      <div class="designer-links">
+        <span class="editable" contenteditable="true" data-field="designer-email" data-placeholder="email@example.com">shr1.gamer@gmail.com</span>
+        <span class="editable" contenteditable="true" data-field="designer-portfolio" data-placeholder="portfolio link">shr1reddy.github.io/Claude-code/portfolio</span>
+        <span class="editable" contenteditable="true" data-field="designer-linkedin" data-placeholder="LinkedIn URL">linkedin.com/in/shravanreddyparlapally</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Hidden file input for image uploads -->
+<input type="file" id="imageInput" accept="image/*" style="display:none">
+
+<script src="app.js"></script>
+</body>
+</html>
