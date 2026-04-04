@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>3D Coin Toss</title>
+<style>
+  /* ── Reset & base ── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: radial-gradient(ellipse at top, #1a1040 0%, #0a0a18 60%, #000 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #fff;
+    user-select: none;
+  }
+
+  /* ── Starfield ── */
+  .stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    animation: twinkle var(--d, 3s) ease-in-out infinite;
+    opacity: 0;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50%       { opacity: var(--o, 0.8); transform: scale(1.4); }
+  }
+
+  /* ── Layout ── */
+  .page {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    width: 100%;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: clamp(1.6rem, 5vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #ffd700, #ffb800, #ff8c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 18px rgba(255,184,0,0.5));
+  }
+
+  /* ── Scoreboard ── */
+  .scoreboard {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+  .score-box {
+    text-align: center;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 14px 28px;
+    backdrop-filter: blur(10px);
+  }
+  .score-box .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.5);
+  }
+  .score-box .num {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-top: 2px;
+  }
+  .score-box.heads .num { color: #ffd700; }
+  .score-box.tails .num { color: #a78bfa; }
+  .score-divider {
+    font-size: 1.8rem;
+    color: rgba(255,255,255,0.2);
+    font-weight: 300;
+  }
+
+  /* ── 3D scene ── */
+  .scene {
+    width: 220px;
+    height: 220px;
+    perspective: 900px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .coin {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: none;
+    /* resting tilt */
+    transform: rotateX(15deg) rotateY(0deg);
+    filter: drop-shadow(0 30px 60px rgba(0,0,0,0.7));
+  }
+
+  /* faces */
+  .face {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── HEADS face ── */
+  .heads-face {
+    background:
+      radial-gradient(circle at 35% 35%, #fff8c0 0%, #ffd700 30%, #b8860b 70%, #8b6914 100%);
+    box-shadow:
+      inset 0 0 0 6px rgba(255,255,255,0.25),
+      inset 0 0 0 8px rgba(0,0,0,0.15),
+      0 0 40px rgba(255,215,0,0.4);
+    border: 4px solid #a07000;
+  }
+
+  .heads-face::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+
+  .heads-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .heads-portrait {
+    width: 80px;
+    height: 80px;
+  }
+
+  .heads-text {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #5a3c00;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+  }
+
+  /* ── TAILS face ── */
+  .tails-face {
+    background:
+      radial-gradient(circle at 65% 35%, #e8d5ff 0%, #9b59b6 30%, #6c3483 70%, #4a235a 100%);
+    box-shadow:
+      inset 0 0 0 6px rgba(255,255,255,0.2),
+      inset 0 0 0 8px rgba(0,0,0,0.2),
+      0 0 40px rgba(150,100,255,0.4);
+    border: 4px solid #5a1a8a;
+    transform: rotateY(180deg);
+  }
+
+  .tails-face::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2);
+  }
+
+  .tails-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .tails-eagle {
+    width: 90px;
+    height: 90px;
+  }
+
+  .tails-text {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #e8d5ff;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+  }
+
+  /* ── Coin edge (rim) ── */
+  .coin-edge {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    transform-style: preserve-3d;
+    pointer-events: none;
+  }
+
+  /* ── Flip animation ── */
+  @keyframes flipCoin {
+    0%   { transform: rotateX(15deg) rotateY(0deg); }
+    10%  { transform: rotateX(15deg) rotateY(180deg) translateY(-40px); }
+    30%  { transform: rotateX(-10deg) rotateY(720deg) translateY(-120px); }
+    50%  { transform: rotateX(20deg) rotateY(1440deg) translateY(-160px); }
+    70%  { transform: rotateX(-5deg) rotateY(2000deg) translateY(-80px); }
+    85%  { transform: rotateX(10deg) rotateY(2340deg) translateY(-20px); }
+    100% { transform: rotateX(15deg) rotateY(var(--end-rotation)); }
+  }
+
+  .coin.flipping {
+    animation: flipCoin 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  /* ── Flip button ── */
+  .flip-btn {
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    color: #2a1500;
+    border: none;
+    border-radius: 100px;
+    padding: 16px 48px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    box-shadow:
+      0 8px 32px rgba(255,184,0,0.4),
+      0 2px 8px rgba(0,0,0,0.3),
+      inset 0 1px 0 rgba(255,255,255,0.4);
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .flip-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 40px rgba(255,184,0,0.5), 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+
+  .flip-btn:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 4px 16px rgba(255,184,0,0.3);
+  }
+
+  .flip-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ── Result label ── */
+  .result-label {
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    min-height: 2.5rem;
+    text-align: center;
+    transition: opacity 0.3s;
+    opacity: 0;
+    filter: drop-shadow(0 0 12px currentColor);
+  }
+
+  .result-label.heads { color: #ffd700; opacity: 1; }
+  .result-label.tails { color: #c084fc; opacity: 1; }
+
+  /* ── Streak ── */
+  .streak {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.45);
+    min-height: 1.4em;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Guess buttons ── */
+  .guess-row {
+    display: flex;
+    gap: 14px;
+  }
+
+  .guess-btn {
+    padding: 10px 28px;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    border: 2px solid;
+    transition: all 0.2s;
+    background: transparent;
+  }
+
+  .guess-btn.heads-btn {
+    color: #ffd700;
+    border-color: rgba(255,215,0,0.4);
+  }
+
+  .guess-btn.heads-btn:hover,
+  .guess-btn.heads-btn.selected {
+    background: rgba(255,215,0,0.15);
+    border-color: #ffd700;
+    box-shadow: 0 0 20px rgba(255,215,0,0.3);
+  }
+
+  .guess-btn.tails-btn {
+    color: #c084fc;
+    border-color: rgba(192,132,252,0.4);
+  }
+
+  .guess-btn.tails-btn:hover,
+  .guess-btn.tails-btn.selected {
+    background: rgba(192,132,252,0.15);
+    border-color: #c084fc;
+    box-shadow: 0 0 20px rgba(192,132,252,0.3);
+  }
+
+  /* ── Particles ── */
+  .particle {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 50;
+    animation: particleFly var(--dur) ease-out forwards;
+  }
+
+  @keyframes particleFly {
+    0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+  }
+
+  /* ── Tap hint ── */
+  .hint {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Reset ── */
+  .reset-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.4);
+    padding: 7px 20px;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:hover {
+    border-color: rgba(255,255,255,0.35);
+    color: rgba(255,255,255,0.7);
+  }
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+
+<div class="page">
+  <h1>🪙 Coin Toss</h1>
+
+  <!-- Scoreboard -->
+  <div class="scoreboard">
+    <div class="score-box heads">
+      <div class="label">Heads</div>
+      <div class="num" id="headsCount">0</div>
+    </div>
+    <div class="score-divider">vs</div>
+    <div class="score-box tails">
+      <div class="label">Tails</div>
+      <div class="num" id="tailsCount">0</div>
+    </div>
+  </div>
+
+  <!-- Guess row -->
+  <div class="guess-row">
+    <button class="guess-btn heads-btn" id="guessHeads" onclick="selectGuess('heads')">Guess Heads</button>
+    <button class="guess-btn tails-btn" id="guessTails" onclick="selectGuess('tails')">Guess Tails</button>
+  </div>
+
+  <!-- 3D Coin -->
+  <div class="scene" id="scene" onclick="flipCoin()">
+    <div class="coin" id="coin">
+
+      <!-- HEADS side -->
+      <div class="face heads-face">
+        <div class="heads-inner">
+          <!-- SVG portrait (stylised profile silhouette) -->
+          <svg class="heads-portrait" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(90,60,0,0.4)" stroke-width="1.5"/>
+            <!-- laurel wreath top -->
+            <ellipse cx="50" cy="22" rx="28" ry="6" fill="rgba(90,60,0,0.25)"/>
+            <path d="M22 22 Q28 14 36 18 Q42 12 50 14 Q58 12 64 18 Q72 14 78 22" stroke="#5a3c00" stroke-width="1.5" fill="none" opacity="0.6"/>
+            <!-- head silhouette -->
+            <ellipse cx="50" cy="38" rx="14" ry="16" fill="#8b6914" opacity="0.7"/>
+            <!-- neck + shoulder -->
+            <path d="M38 54 Q38 65 30 72 Q40 74 50 74 Q60 74 70 72 Q62 65 62 54" fill="#8b6914" opacity="0.6"/>
+            <!-- star in center -->
+            <path d="M50 42 L52 48 L58 48 L53 52 L55 58 L50 54 L45 58 L47 52 L42 48 L48 48 Z" fill="rgba(255,220,50,0.5)"/>
+            <!-- text arc HEADS -->
+            <path id="headsArc" d="M 16 50 A 34 34 0 0 1 84 50" fill="none"/>
+            <text font-size="7" font-family="serif" font-weight="bold" fill="#5a3c00" letter-spacing="3">
+              <textPath href="#headsArc" startOffset="15%">HEADS • 2024</textPath>
+            </text>
+          </svg>
+          <span class="heads-text">Heads</span>
+        </div>
+      </div>
+
+      <!-- TAILS side -->
+      <div class="face tails-face">
+        <div class="tails-inner">
+          <svg class="tails-eagle" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(200,160,255,0.3)" stroke-width="1.5"/>
+            <!-- eagle body -->
+            <ellipse cx="50" cy="52" rx="12" ry="14" fill="#c084fc" opacity="0.8"/>
+            <!-- wings -->
+            <path d="M38 50 Q25 40 12 44 Q20 52 30 50 Q35 52 38 56" fill="#9b59b6" opacity="0.85"/>
+            <path d="M62 50 Q75 40 88 44 Q80 52 70 50 Q65 52 62 56" fill="#9b59b6" opacity="0.85"/>
+            <!-- head -->
+            <circle cx="50" cy="36" r="9" fill="#e8d5ff" opacity="0.9"/>
+            <!-- beak -->
+            <path d="M50 40 L54 43 L50 44 Z" fill="#ffd700" opacity="0.9"/>
+            <!-- eye -->
+            <circle cx="53" cy="35" r="2" fill="#4a235a"/>
+            <circle cx="53.7" cy="34.3" r="0.7" fill="white"/>
+            <!-- tail feathers -->
+            <path d="M44 64 Q50 72 56 64 Q53 70 50 74 Q47 70 44 64 Z" fill="#9b59b6" opacity="0.7"/>
+            <!-- talons -->
+            <path d="M44 66 L40 72 M50 68 L50 74 M56 66 L60 72" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- stars -->
+            <path d="M24 26 L25.2 29.6 L29 29.6 L26 31.8 L27.2 35.4 L24 33.2 L20.8 35.4 L22 31.8 L19 29.6 L22.8 29.6 Z" fill="#ffd700" opacity="0.7"/>
+            <path d="M76 26 L77.2 29.6 L81 29.6 L78 31.8 L79.2 35.4 L76 33.2 L72.8 35.4 L74 31.8 L71 29.6 L74.8 29.6 Z" fill="#ffd700" opacity="0.7"/>
+            <!-- bottom text arc -->
+            <path id="tailsArc" d="M 16 55 A 34 34 0 0 0 84 55" fill="none"/>
+            <text font-size="7" font-family="serif" font-weight="bold" fill="#e8d5ff" letter-spacing="3" opacity="0.8">
+              <textPath href="#tailsArc" startOffset="15%">TAILS • 2024</textPath>
+            </text>
+          </svg>
+          <span class="tails-text">Tails</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="hint">Tap the coin or press the button to flip</div>
+
+  <!-- Result -->
+  <div class="result-label" id="resultLabel">—</div>
+  <div class="streak" id="streakLabel"></div>
+
+  <!-- Flip button -->
+  <button class="flip-btn" id="flipBtn" onclick="flipCoin()">🪙 Flip Coin</button>
+
+  <button class="reset-btn" onclick="resetStats()">Reset Stats</button>
+</div>
+
+<script>
+// ─── Starfield ───────────────────────────────────
+(function buildStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      top:${Math.random()*100}%; left:${Math.random()*100}%;
+      --d:${(Math.random()*4+2).toFixed(1)}s;
+      --o:${(Math.random()*0.7+0.3).toFixed(2)};
+      animation-delay:${(Math.random()*5).toFixed(2)}s;
+    `;
+    container.appendChild(s);
+  }
+})();
+
+// ─── State ───────────────────────────────────────
+let headsCount = 0, tailsCount = 0;
+let streak = 0, streakSide = '';
+let isFlipping = false;
+let currentFace = 'heads'; // which face is up
+let guess = null;
+
+// ─── Sound (Web Audio API) ────────────────────────
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playClick(freq = 600, dur = 0.04) {
+  try {
+    const ctx = getAudio();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.value = 0.18;
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + dur);
+  } catch(e) {}
+}
+
+function playFlipSound() {
+  try {
+    const ctx = getAudio();
+    // Whooshing metallic clicks
+    [0, 120, 240, 380, 520, 660, 780, 900, 1050, 1180, 1300, 1420].forEach((delay, i) => {
+      setTimeout(() => {
+        const freq = 300 + Math.random() * 400;
+        playClick(freq, 0.06);
+      }, delay);
+    });
+  } catch(e) {}
+}
+
+function playLandSound(isHeads) {
+  try {
+    const ctx = getAudio();
+    const freq = isHeads ? 440 : 330;
+    // Thud + ring
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + 0.8);
+    // bonus chime
+    setTimeout(() => playClick(isHeads ? 880 : 660, 0.2), 80);
+    setTimeout(() => playClick(isHeads ? 1047 : 784, 0.15), 200);
+  } catch(e) {}
+}
+
+function playCelebration() {
+  [0,120,240,360].forEach((delay, i) => {
+    setTimeout(() => playClick(523 + i * 130, 0.18), delay);
+  });
+}
+
+// ─── Guess selection ──────────────────────────────
+function selectGuess(side) {
+  guess = side;
+  document.getElementById('guessHeads').classList.toggle('selected', side === 'heads');
+  document.getElementById('guessTails').classList.toggle('selected', side === 'tails');
+  playClick(500, 0.05);
+}
+
+// ─── Particles ────────────────────────────────────
+function spawnParticles(x, y, color) {
+  for (let i = 0; i < 28; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 4 + Math.random() * 7;
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 80 + Math.random() * 180;
+    const dur = 0.6 + Math.random() * 0.7;
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${x}px; top:${y}px;
+      background:${color};
+      --tx:${Math.cos(angle)*dist}px;
+      --ty:${Math.sin(angle)*dist}px;
+      --dur:${dur}s;
+      animation-duration:${dur}s;
+    `;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), dur * 1000 + 100);
+  }
+}
+
+// ─── Main flip logic ──────────────────────────────
+function flipCoin() {
+  if (isFlipping) return;
+  isFlipping = true;
+  getAudio(); // unlock audio context
+
+  const coin     = document.getElementById('coin');
+  const flipBtn  = document.getElementById('flipBtn');
+  const result   = document.getElementById('resultLabel');
+  const scene    = document.getElementById('scene');
+
+  // Reset classes/animation
+  coin.classList.remove('flipping');
+  void coin.offsetWidth; // reflow
+
+  // Decide outcome
+  const landHeads = Math.random() < 0.5;
+  currentFace = landHeads ? 'heads' : 'tails';
+
+  // rotateY: even multiples of 360 → heads, odd → tails
+  // We add lots of spins + final alignment
+  const extraSpins = (6 + Math.floor(Math.random() * 4)) * 360;
+  const finalY = landHeads ? extraSpins : extraSpins + 180;
+  coin.style.setProperty('--end-rotation', `${finalY}deg`);
+
+  // Disable
+  flipBtn.disabled = true;
+  result.className = 'result-label';
+  result.textContent = '…';
+
+  playFlipSound();
+  coin.classList.add('flipping');
+
+  // Landing
+  setTimeout(() => {
+    isFlipping = false;
+    flipBtn.disabled = false;
+
+    // Update counts
+    if (landHeads) { headsCount++; document.getElementById('headsCount').textContent = headsCount; }
+    else           { tailsCount++; document.getElementById('tailsCount').textContent = tailsCount; }
+
+    // Streak
+    if (streakSide === currentFace) { streak++; }
+    else { streak = 1; streakSide = currentFace; }
+
+    // Result label
+    result.textContent = landHeads ? '🪙 HEADS!' : '🌀 TAILS!';
+    result.className = 'result-label ' + currentFace;
+
+    // Streak label
+    const streakEl = document.getElementById('streakLabel');
+    if (streak >= 2) {
+      streakEl.textContent = `🔥 ${streak}× ${currentFace.toUpperCase()} streak!`;
+    } else {
+      streakEl.textContent = '';
+    }
+
+    // Particles
+    const sceneRect = scene.getBoundingClientRect();
+    const cx = sceneRect.left + sceneRect.width / 2;
+    const cy = sceneRect.top  + sceneRect.height / 2;
+    const color = landHeads ? '#ffd700' : '#c084fc';
+    spawnParticles(cx, cy, color);
+
+    // Sound
+    playLandSound(landHeads);
+
+    // Guess feedback
+    if (guess) {
+      const correct = guess === currentFace;
+      if (correct) {
+        playCelebration();
+        result.textContent = (landHeads ? '🪙 HEADS!' : '🌀 TAILS!') + ' ✅ Correct!';
+      } else {
+        result.textContent = (landHeads ? '🪙 HEADS!' : '🌀 TAILS!') + ' ❌ Wrong!';
+      }
+      guess = null;
+      document.getElementById('guessHeads').classList.remove('selected');
+      document.getElementById('guessTails').classList.remove('selected');
+    }
+
+    // Keep coin in landed position
+    coin.classList.remove('flipping');
+    coin.style.transform = `rotateX(15deg) rotateY(${finalY}deg)`;
+
+  }, 2250);
+}
+
+// ─── Hover tilt on scene ──────────────────────────
+const sceneEl = document.getElementById('scene');
+sceneEl.addEventListener('mousemove', (e) => {
+  if (isFlipping) return;
+  const r = sceneEl.getBoundingClientRect();
+  const x = (e.clientY - r.top  - r.height/2) / (r.height/2);
+  const y = (e.clientX - r.left - r.width/2)  / (r.width/2);
+  const coin = document.getElementById('coin');
+  const baseY = parseFloat(coin.style.transform?.match(/rotateY\(([^)]+)deg\)/)?.[1] || '0');
+  coin.style.transform = `rotateX(${15 - x*10}deg) rotateY(${baseY + y*5}deg)`;
+});
+
+sceneEl.addEventListener('mouseleave', () => {
+  if (isFlipping) return;
+  const coin = document.getElementById('coin');
+  const baseY = parseFloat(coin.style.transform?.match(/rotateY\(([^)]+)deg\)/)?.[1] || '0');
+  coin.style.transform = `rotateX(15deg) rotateY(${baseY}deg)`;
+  coin.style.transition = 'transform 0.4s ease';
+  setTimeout(() => coin.style.transition = '', 400);
+});
+
+// ─── Touch flip on coin ───────────────────────────
+sceneEl.addEventListener('touchend', (e) => {
+  e.preventDefault();
+  flipCoin();
+});
+
+// ─── Reset ───────────────────────────────────────
+function resetStats() {
+  headsCount = 0; tailsCount = 0; streak = 0; streakSide = '';
+  document.getElementById('headsCount').textContent = '0';
+  document.getElementById('tailsCount').textContent = '0';
+  document.getElementById('resultLabel').className = 'result-label';
+  document.getElementById('resultLabel').textContent = '—';
+  document.getElementById('streakLabel').textContent = '';
+  playClick(300, 0.08);
+}
+
+// ─── Keyboard shortcut: Space / Enter ────────────
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); flipCoin(); }
+  if (e.code === 'KeyH') selectGuess('heads');
+  if (e.code === 'KeyT') selectGuess('tails');
+});
+</script>
+</body>
+</html>
