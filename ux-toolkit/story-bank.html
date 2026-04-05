@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Story Bank — STAR Format</title>
+<style>
+:root{--bg:#0a0a0f;--bg2:#12121a;--card:#1a1a25;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--text:#eee;--text2:#999;--text3:#666;--accent:#10b981;--accent2:#6ee7b7;--accent-bg:rgba(16,185,129,0.1);--purple:#7c5cfc;--purple-bg:rgba(124,92,252,0.1);--orange:#f59e0b;--red:#ef4444;--font:'Segoe UI',system-ui,sans-serif;--radius:14px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+.app{max-width:900px;margin:0 auto;padding:24px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px}
+.header h1{font-size:1.5rem;font-weight:800;letter-spacing:-0.02em}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:8px 16px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--border2);background:var(--bg2)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-primary:hover{background:#059669}
+.btn-sm{padding:5px 10px;font-size:0.75rem}
+.btn-danger{border-color:rgba(239,68,68,0.3);color:var(--red)}
+.btn-danger:hover{background:rgba(239,68,68,0.1)}
+a.back{color:var(--text2);text-decoration:none;font-size:0.85rem}
+a.back:hover{color:var(--accent2)}
+
+.stats{display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.stat-chip{padding:6px 14px;border-radius:100px;background:var(--card);border:1px solid var(--border);font-size:0.78rem;color:var(--text2);font-weight:600}
+.stat-chip strong{color:var(--accent2);margin-right:4px}
+
+.filters{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.filter-btn{padding:5px 12px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.15s}
+.filter-btn:hover,.filter-btn.active{border-color:var(--accent);color:var(--accent2);background:var(--accent-bg)}
+
+.search-bar{position:relative;margin-bottom:16px}
+.search-bar input{width:100%;padding:10px 14px 10px 38px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:0.88rem;outline:none}
+.search-bar input:focus{border-color:var(--accent)}
+.search-bar svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3)}
+
+/* Story cards */
+.entries{display:flex;flex-direction:column;gap:14px}
+.story-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:all 0.25s;position:relative}
+.story-card:hover{border-color:var(--border2);box-shadow:0 8px 30px rgba(0,0,0,0.3)}
+.story-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:12px}
+.story-title{font-size:1.05rem;font-weight:700;flex:1}
+.story-meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.story-tag{padding:3px 10px;border-radius:100px;font-size:0.7rem;font-weight:600}
+.story-tag.comp{background:var(--purple-bg);color:#a78bfa}
+.story-tag.diff-senior{background:rgba(245,158,11,0.1);color:#f59e0b}
+.story-tag.diff-staff{background:rgba(239,68,68,0.1);color:#f87171}
+.story-tag.diff-lead{background:rgba(236,72,153,0.1);color:#f472b6}
+
+.star-section{margin-bottom:12px;padding:12px 16px;border-radius:10px;background:var(--bg2);border-left:3px solid}
+.star-section.s-situation{border-color:#3b82f6}
+.star-section.s-task{border-color:#f59e0b}
+.star-section.s-action{border-color:#10b981}
+.star-section.s-result{border-color:#ec4899}
+.star-label{font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+.star-section.s-situation .star-label{color:#60a5fa}
+.star-section.s-task .star-label{color:#fbbf24}
+.star-section.s-action .star-label{color:#6ee7b7}
+.star-section.s-result .star-label{color:#f9a8d4}
+.star-section p{font-size:0.88rem;color:var(--text2);line-height:1.65}
+
+.story-actions{display:flex;gap:6px;position:absolute;top:16px;right:16px;opacity:0;transition:opacity 0.2s}
+.story-card:hover .story-actions{opacity:1}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-state .icon{font-size:3rem;margin-bottom:16px;opacity:0.5}
+.empty-state h3{font-size:1.1rem;font-weight:700;color:var(--text2);margin-bottom:8px}
+.empty-state p{font-size:0.88rem;max-width:450px;margin:0 auto}
+
+/* Form */
+.form-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+.form-overlay.open{display:flex}
+.form-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:32px;width:100%;max-width:650px;max-height:90vh;overflow-y:auto}
+.form-card h2{font-size:1.2rem;font-weight:800;margin-bottom:20px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:0.78rem;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:0.88rem;outline:none;transition:border 0.2s}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--accent)}
+.form-group textarea{min-height:80px;resize:vertical;line-height:1.6}
+.form-group select{cursor:pointer}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+.form-hint{font-size:0.72rem;color:var(--text3);margin-top:4px;font-style:italic}
+.tag-input{display:flex;flex-wrap:wrap;gap:6px;padding:8px;border-radius:10px;border:1px solid var(--border);background:var(--card);min-height:42px;cursor:text}
+.tag-input .tag{padding:3px 10px;border-radius:100px;background:var(--purple-bg);color:#a78bfa;font-size:0.75rem;font-weight:600;display:flex;align-items:center;gap:4px}
+.tag-input .tag .rm{cursor:pointer;opacity:0.6}.tag-input .tag .rm:hover{opacity:1}
+.tag-input input{border:none;background:none;color:var(--text);outline:none;font-size:0.82rem;flex:1;min-width:80px}
+
+/* Quick prep mode */
+.prep-banner{background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(124,92,252,0.06));border:1px solid rgba(16,185,129,0.2);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.prep-banner h3{font-size:0.95rem;font-weight:700;color:var(--accent2)}
+.prep-banner p{font-size:0.82rem;color:var(--text2);max-width:500px}
+</style>
+</head>
+<body>
+<div class="app">
+  <a href="index.html" class="back">← Back to Toolkit</a>
+  <div class="header">
+    <h1>🎯 Interview Story Bank</h1>
+    <div class="header-actions">
+      <button class="btn" onclick="exportStories()">Export JSON</button>
+      <button class="btn" onclick="importStories()">Import</button>
+      <button class="btn btn-primary" onclick="openForm()">+ New Story</button>
+    </div>
+  </div>
+
+  <div class="prep-banner">
+    <div>
+      <h3>Interview Prep Mode</h3>
+      <p>Filter by competency to quickly find relevant stories. Each story follows STAR format — ready to tell in 2-3 minutes.</p>
+    </div>
+    <button class="btn" onclick="randomStory()">🎲 Random Story</button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div class="search-bar">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="search" placeholder="Search stories..." oninput="render()">
+  </div>
+  <div class="filters" id="filters"></div>
+  <div class="entries" id="entries"></div>
+</div>
+
+<!-- Form -->
+<div class="form-overlay" id="formOverlay" onclick="if(event.target===this)closeForm()">
+  <div class="form-card">
+    <h2 id="formTitle">Add Interview Story</h2>
+    <input type="hidden" id="editId">
+    <div class="form-group">
+      <label>Story Title (memorable name for quick recall)</label>
+      <input type="text" id="f-title" placeholder="e.g., The time I redesigned the AI onboarding and doubled activation">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Difficulty / Level</label>
+        <select id="f-diff">
+          <option value="senior">Senior-level</option>
+          <option value="staff">Staff-level</option>
+          <option value="lead">Lead / Director-level</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Company / Context</label>
+        <input type="text" id="f-company" placeholder="e.g., HealthTech startup, 2024">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Situation — Set the scene (30 seconds)</label>
+      <textarea id="f-situation" placeholder="What was happening? What was the context? Who was involved? Why did it matter?"></textarea>
+      <div class="form-hint">Tip: Be specific about the company, team size, and stakes. "At a 200-person health-tech startup, our patient engagement had dropped to 12%..."</div>
+    </div>
+    <div class="form-group">
+      <label>Task — What was YOUR specific responsibility? (15 seconds)</label>
+      <textarea id="f-task" placeholder="What were you asked to do? What was your role? What was the goal?"></textarea>
+      <div class="form-hint">Tip: Make your ownership clear. "I was brought in as the lead designer to..."</div>
+    </div>
+    <div class="form-group">
+      <label>Action — What did YOU do? (60-90 seconds)</label>
+      <textarea id="f-action" placeholder="Walk through your specific actions step by step. Use 'I' not 'we'. Show your thinking process."></textarea>
+      <div class="form-hint">Tip: This is the LONGEST section. Show your process, decisions, and how you navigated challenges. "First, I... Then, I... When X happened, I decided to..."</div>
+    </div>
+    <div class="form-group">
+      <label>Result — What was the measurable outcome? (30 seconds)</label>
+      <textarea id="f-result" placeholder="Quantify the impact. Metrics, business outcomes, user feedback, team growth."></textarea>
+      <div class="form-hint">Tip: Use numbers. "Engagement increased from 12% to 45%. The feature generated $2.4M in annual revenue. I was promoted to..."</div>
+    </div>
+    <div class="form-group">
+      <label>Competency Tags (type and press Enter)</label>
+      <div class="tag-input" id="tagInput" onclick="this.querySelector('input').focus()">
+        <input type="text" placeholder="leadership, AI design, stakeholder mgmt..." onkeydown="handleTagKey(event)">
+      </div>
+      <div class="form-hint">Common tags: leadership, AI design, systems thinking, stakeholder management, user research, mentoring, strategy, data-driven, collaboration, conflict resolution</div>
+    </div>
+    <div class="form-actions">
+      <button class="btn" onclick="closeForm()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEntry()">Save Story</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="importInput" accept=".json" style="display:none">
+
+<script>
+const STORAGE='ux-story-bank';
+let stories=JSON.parse(localStorage.getItem(STORAGE)||'[]');
+let activeFilter='all';
+let formTags=[];
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+
+function render(){
+  const container=document.getElementById('entries');
+  const search=document.getElementById('search').value.toLowerCase();
+  let filtered=stories.filter(s=>{
+    if(activeFilter!=='all'){
+      const tags=(s.tags||[]).map(t=>t.toLowerCase());
+      if(!tags.includes(activeFilter.toLowerCase())) return false;
+    }
+    if(search){
+      const hay=[s.title,s.situation,s.task,s.action,s.result,s.company,...(s.tags||[])].join(' ').toLowerCase();
+      if(!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  if(!filtered.length){
+    container.innerHTML=`<div class="empty-state"><div class="icon">🎯</div><h3>${stories.length?'No matching stories':'Start building your story bank'}</h3><p>${stories.length?'Try different filters or search terms.':'Every senior designer has 50+ great stories. Click "+ New Story" and start with a recent project you\'re proud of.'}</p></div>`;
+    renderStats();renderFilters();return;
+  }
+
+  container.innerHTML=filtered.map(s=>`
+    <div class="story-card">
+      <div class="story-actions">
+        <button class="btn btn-sm" onclick="editEntry('${s.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteEntry('${s.id}')">Delete</button>
+      </div>
+      <div class="story-header"><div class="story-title">${esc(s.title)}</div></div>
+      <div class="story-meta">
+        <span class="story-tag diff-${s.difficulty}">${s.difficulty}-level</span>
+        ${s.company?`<span class="story-tag comp">${esc(s.company)}</span>`:''}
+        ${(s.tags||[]).map(t=>`<span class="story-tag comp">${esc(t)}</span>`).join('')}
+      </div>
+      <div class="star-section s-situation"><div class="star-label">S — Situation</div><p>${esc(s.situation)}</p></div>
+      <div class="star-section s-task"><div class="star-label">T — Task</div><p>${esc(s.task)}</p></div>
+      <div class="star-section s-action"><div class="star-label">A — Action</div><p>${esc(s.action)}</p></div>
+      <div class="star-section s-result"><div class="star-label">R — Result</div><p>${esc(s.result)}</p></div>
+    </div>
+  `).join('');
+  renderStats();renderFilters();
+}
+
+function renderStats(){
+  const s=document.getElementById('stats');
+  const allTags=new Set();stories.forEach(st=>(st.tags||[]).forEach(t=>allTags.add(t)));
+  s.innerHTML=`
+    <div class="stat-chip"><strong>${stories.length}</strong> Stories</div>
+    <div class="stat-chip"><strong>${allTags.size}</strong> Competencies</div>
+    <div class="stat-chip"><strong>${stories.filter(s=>s.difficulty==='lead').length}</strong> Director-level</div>
+  `;
+}
+
+function renderFilters(){
+  const f=document.getElementById('filters');
+  const allTags=new Set();stories.forEach(s=>(s.tags||[]).forEach(t=>allTags.add(t)));
+  f.innerHTML=['all',...allTags].map(t=>`<button class="filter-btn${activeFilter===t?' active':''}" onclick="activeFilter='${t}';render()">${t==='all'?'All':t}</button>`).join('');
+}
+
+function openForm(){
+  document.getElementById('formOverlay').classList.add('open');
+  document.getElementById('editId').value='';
+  document.getElementById('formTitle').textContent='Add Interview Story';
+  ['f-title','f-company','f-situation','f-task','f-action','f-result'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-diff').value='senior';
+  formTags=[];renderFormTags();
+}
+function closeForm(){document.getElementById('formOverlay').classList.remove('open')}
+
+function saveEntry(){
+  const id=document.getElementById('editId').value;
+  const entry={
+    id:id||uid(),
+    title:document.getElementById('f-title').value.trim(),
+    difficulty:document.getElementById('f-diff').value,
+    company:document.getElementById('f-company').value.trim(),
+    situation:document.getElementById('f-situation').value.trim(),
+    task:document.getElementById('f-task').value.trim(),
+    action:document.getElementById('f-action').value.trim(),
+    result:document.getElementById('f-result').value.trim(),
+    tags:[...formTags]
+  };
+  if(!entry.title||!entry.action){alert('Title and Action are required.');return}
+  if(id){const idx=stories.findIndex(s=>s.id===id);if(idx>-1)stories[idx]=entry;}
+  else stories.push(entry);
+  persist();closeForm();render();
+}
+
+function editEntry(id){
+  const s=stories.find(x=>x.id===id);if(!s)return;
+  openForm();
+  document.getElementById('editId').value=s.id;
+  document.getElementById('formTitle').textContent='Edit Story';
+  document.getElementById('f-title').value=s.title;
+  document.getElementById('f-diff').value=s.difficulty;
+  document.getElementById('f-company').value=s.company||'';
+  document.getElementById('f-situation').value=s.situation||'';
+  document.getElementById('f-task').value=s.task||'';
+  document.getElementById('f-action').value=s.action||'';
+  document.getElementById('f-result').value=s.result||'';
+  formTags=[...(s.tags||[])];renderFormTags();
+}
+
+function deleteEntry(id){if(!confirm('Delete this story?'))return;stories=stories.filter(s=>s.id!==id);persist();render()}
+function randomStory(){if(!stories.length)return;const s=stories[Math.floor(Math.random()*stories.length)];document.getElementById('search').value=s.title;render()}
+
+function handleTagKey(e){if(e.key==='Enter'&&e.target.value.trim()){e.preventDefault();formTags.push(e.target.value.trim());e.target.value='';renderFormTags()}}
+function renderFormTags(){
+  const c=document.getElementById('tagInput');const input=c.querySelector('input');
+  c.querySelectorAll('.tag').forEach(t=>t.remove());
+  formTags.forEach((tag,i)=>{const el=document.createElement('span');el.className='tag';el.innerHTML=`${tag}<span class="rm" onclick="formTags.splice(${i},1);renderFormTags()">×</span>`;c.insertBefore(el,input)});
+}
+
+function persist(){localStorage.setItem(STORAGE,JSON.stringify(stories))}
+function exportStories(){const b=new Blob([JSON.stringify(stories,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='ux-story-bank.json';a.click()}
+function importStories(){document.getElementById('importInput').click()}
+document.getElementById('importInput').addEventListener('change',function(){
+  const f=this.files[0];if(!f)return;
+  const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);if(Array.isArray(d)){stories=[...stories,...d];persist();render()}}catch(err){alert('Invalid JSON')}};
+  r.readAsText(f);this.value='';
+});
+
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
+
+render();
+</script>
+</body>
+</html>

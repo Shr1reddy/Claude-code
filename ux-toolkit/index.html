@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX Career Toolkit — Shravan Parlapally</title>
+<style>
+:root {
+  --bg:#0a0a0f; --bg2:#12121a; --card:#1a1a25; --card-hover:#22223a;
+  --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.14);
+  --text:#eee; --text2:#999; --text3:#666;
+  --accent:#7c5cfc; --accent2:#a78bfa; --accent-bg:rgba(124,92,252,0.1);
+  --green:#10b981; --green-bg:rgba(16,185,129,0.1);
+  --orange:#f59e0b; --orange-bg:rgba(245,158,11,0.1);
+  --pink:#ec4899; --pink-bg:rgba(236,72,153,0.1);
+  --blue:#3b82f6; --blue-bg:rgba(59,130,246,0.1);
+  --font:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ── Hub Layout ── */
+.hub{max-width:1100px;margin:0 auto;padding:40px 24px 80px}
+.hub-header{text-align:center;margin-bottom:48px}
+.hub-header h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;letter-spacing:-0.03em;margin-bottom:8px;background:linear-gradient(135deg,#7c5cfc,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hub-header p{color:var(--text2);font-size:1.05rem;max-width:600px;margin:0 auto}
+.hub-header .name-badge{display:inline-block;padding:6px 18px;border-radius:100px;background:var(--accent-bg);border:1px solid rgba(124,92,252,0.3);color:var(--accent2);font-weight:600;font-size:0.85rem;margin-bottom:16px}
+
+/* ── Tool Grid ── */
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-bottom:48px}
+
+.tool-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:32px 28px;cursor:pointer;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);
+  position:relative;overflow:hidden;text-decoration:none;color:inherit;display:block;
+}
+.tool-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+.tool-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.4s;pointer-events:none}
+.tool-card:hover::before{opacity:1}
+
+.tool-card.purple::before{background:radial-gradient(ellipse at 30% 30%,rgba(124,92,252,0.06),transparent 70%)}
+.tool-card.green::before{background:radial-gradient(ellipse at 30% 30%,rgba(16,185,129,0.06),transparent 70%)}
+.tool-card.orange::before{background:radial-gradient(ellipse at 30% 30%,rgba(245,158,11,0.06),transparent 70%)}
+.tool-card.pink::before{background:radial-gradient(ellipse at 30% 30%,rgba(236,72,153,0.06),transparent 70%)}
+.tool-card.blue::before{background:radial-gradient(ellipse at 30% 30%,rgba(59,130,246,0.06),transparent 70%)}
+
+.tool-icon{font-size:2.2rem;margin-bottom:16px}
+.tool-card h2{font-size:1.2rem;font-weight:800;margin-bottom:8px;letter-spacing:-0.02em}
+.tool-card p{color:var(--text2);font-size:0.88rem;line-height:1.6;margin-bottom:16px}
+.tool-tag{font-size:0.72rem;padding:4px 10px;border-radius:100px;font-weight:600;display:inline-block;margin-right:6px}
+.tag-ready{background:var(--green-bg);color:var(--green)}
+.tag-live{background:var(--accent-bg);color:var(--accent2)}
+.tag-new{background:var(--orange-bg);color:var(--orange)}
+
+.tool-features{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.tool-features li{color:var(--text2);font-size:0.82rem;margin-bottom:6px;list-style:none;padding-left:18px;position:relative}
+.tool-features li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700;font-size:0.75rem}
+
+/* ── Philosophy Section ── */
+.philosophy{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:40px;margin-bottom:32px}
+.philosophy h2{font-size:1.4rem;font-weight:800;margin-bottom:24px;letter-spacing:-0.02em}
+.philosophy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.phil-card{padding:20px;border-radius:12px;background:var(--bg2);border:1px solid var(--border)}
+.phil-card h3{font-size:0.95rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.phil-card p{font-size:0.82rem;color:var(--text2);line-height:1.6}
+
+/* ── Strategy Banner ── */
+.strategy{background:linear-gradient(135deg,rgba(124,92,252,0.08),rgba(236,72,153,0.06));border:1px solid rgba(124,92,252,0.2);border-radius:var(--radius);padding:40px;text-align:center;margin-bottom:32px}
+.strategy h2{font-size:1.3rem;font-weight:800;margin-bottom:12px}
+.strategy p{color:var(--text2);font-size:0.92rem;max-width:650px;margin:0 auto 24px;line-height:1.7}
+.strategy-steps{display:flex;justify-content:center;gap:32px;flex-wrap:wrap}
+.step{text-align:center;min-width:120px}
+.step-num{font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,#7c5cfc,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.step-label{font-size:0.78rem;color:var(--text2);margin-top:4px}
+.step-connector{color:var(--text3);font-size:1.4rem;align-self:center;margin-top:-12px}
+
+/* ── Footer ── */
+.hub-footer{text-align:center;padding:32px 0;border-top:1px solid var(--border);color:var(--text3);font-size:0.82rem}
+
+@media(max-width:640px){
+  .tool-grid{grid-template-columns:1fr}
+  .philosophy-grid{grid-template-columns:1fr}
+  .strategy-steps{gap:16px}
+  .step-connector{display:none}
+}
+</style>
+</head>
+<body>
+<div class="hub">
+
+  <header class="hub-header">
+    <div class="name-badge">Shravan Parlapally — 15 Years in UX</div>
+    <h1>UX Career Toolkit</h1>
+    <p>Everything you need to articulate your expertise, win roles, land consulting clients, and build an unshakeable professional presence.</p>
+  </header>
+
+  <!-- Strategy Banner -->
+  <div class="strategy">
+    <h2>Your Career Confidence System</h2>
+    <p>Stop second-guessing your value. This toolkit turns your 15 years of tacit knowledge into visible, structured, deployable career assets.</p>
+    <div class="strategy-steps">
+      <div class="step"><div class="step-num">01</div><div class="step-label">Capture Decisions</div></div>
+      <span class="step-connector">→</span>
+      <div class="step"><div class="step-num">02</div><div class="step-label">Build Case Studies</div></div>
+      <span class="step-connector">→</span>
+      <div class="step"><div class="step-num">03</div><div class="step-label">Prepare Stories</div></div>
+      <span class="step-connector">→</span>
+      <div class="step"><div class="step-num">04</div><div class="step-label">Win Opportunities</div></div>
+    </div>
+  </div>
+
+  <!-- Tool Grid -->
+  <div class="tool-grid">
+
+    <a href="decision-log.html" class="tool-card purple">
+      <div class="tool-icon">📋</div>
+      <h2>UX Decision Log</h2>
+      <p>Capture design decisions in real-time as you work. Stop losing the "why" behind your design choices. Each log entry becomes raw material for case studies and interview stories.</p>
+      <span class="tool-tag tag-ready">Ready</span>
+      <span class="tool-tag tag-new">New</span>
+      <ul class="tool-features">
+        <li>Structured decision capture (context → options → rationale → outcome)</li>
+        <li>Tag by competency: AI design, leadership, systems thinking, research</li>
+        <li>Auto-saves to browser — export as JSON anytime</li>
+        <li>Feed directly into Case Study Generator</li>
+      </ul>
+    </a>
+
+    <a href="story-bank.html" class="tool-card green">
+      <div class="tool-icon">🎯</div>
+      <h2>Interview Story Bank</h2>
+      <p>Your personal library of STAR-format stories, indexed by competency. Never go blank in an interview again. 15 years = hundreds of stories. Capture them all.</p>
+      <span class="tool-tag tag-ready">Ready</span>
+      <span class="tool-tag tag-new">New</span>
+      <ul class="tool-features">
+        <li>STAR format: Situation → Task → Action → Result</li>
+        <li>Tag by competency: leadership, AI, strategy, craft, collaboration</li>
+        <li>Difficulty rating and impact metrics</li>
+        <li>Quick-search for interview prep</li>
+      </ul>
+    </a>
+
+    <a href="../ux-case-study/" class="tool-card orange">
+      <div class="tool-icon">📑</div>
+      <h2>Case Study Builder</h2>
+      <p>The 2026 case study template you already have — with all the sections hiring managers care about including AI design decisions, accessibility, and measurable outcomes.</p>
+      <span class="tool-tag tag-live">Live</span>
+      <ul class="tool-features">
+        <li>10 sections covering the full 2026 UX case study format</li>
+        <li>Inline editing — click any text to edit</li>
+        <li>Export to PDF, Word, and JSON</li>
+        <li>Image upload with drag-and-drop</li>
+      </ul>
+    </a>
+
+    <a href="knowledge-base.html" class="tool-card pink">
+      <div class="tool-icon">🧠</div>
+      <h2>UX Knowledge Base</h2>
+      <p>Your personal "Second Brain" — document your design principles, frameworks, hot takes, and mental models. This is what separates a 15-year veteran from a 3-year designer.</p>
+      <span class="tool-tag tag-ready">Ready</span>
+      <span class="tool-tag tag-new">New</span>
+      <ul class="tool-features">
+        <li>Capture your unique design principles and point-of-view</li>
+        <li>Document frameworks you've developed over 15 years</li>
+        <li>Reference library of patterns, anti-patterns, and lessons</li>
+        <li>Shareable — use for blog posts, talks, and thought leadership</li>
+      </ul>
+    </a>
+
+    <a href="consulting-proposal.html" class="tool-card blue">
+      <div class="tool-icon">💼</div>
+      <h2>Consulting Proposal Generator</h2>
+      <p>Position yourself as a premium UX consultant, not a freelancer. Professional proposals that communicate value, scope, and expertise to world-class brands.</p>
+      <span class="tool-tag tag-ready">Ready</span>
+      <span class="tool-tag tag-new">New</span>
+      <ul class="tool-features">
+        <li>Professional proposal structure (Problem → Approach → Investment)</li>
+        <li>Scope definition with deliverables and timeline</li>
+        <li>Pricing tiers (Advisory, Embedded, Fractional Lead)</li>
+        <li>Export to PDF for client presentation</li>
+      </ul>
+    </a>
+
+    <a href="../portfolio/" class="tool-card purple">
+      <div class="tool-icon">🌐</div>
+      <h2>Portfolio Website</h2>
+      <p>Your live AI Product Designer portfolio — already deployed. Dark-themed, Framer-quality, with smooth animations and all the right sections.</p>
+      <span class="tool-tag tag-live">Live</span>
+      <ul class="tool-features">
+        <li>Hero, About, Projects, Skills, Testimonials, Contact</li>
+        <li>Cursor glow, parallax, scroll-reveal animations</li>
+        <li>Mobile responsive and iPad optimized</li>
+        <li>GitHub Pages deployment</li>
+      </ul>
+    </a>
+
+  </div>
+
+  <!-- Philosophy Section -->
+  <div class="philosophy">
+    <h2>Why This Toolkit Exists</h2>
+    <div class="philosophy-grid">
+      <div class="phil-card">
+        <h3>🎯 The Articulation Gap</h3>
+        <p>Most senior designers can DO the work brilliantly but struggle to EXPLAIN it in a structured way. This toolkit closes that gap by giving you capture-first workflows.</p>
+      </div>
+      <div class="phil-card">
+        <h3>⚡ Always Ready</h3>
+        <p>Opportunities don't wait. When a recruiter reaches out, a client asks for a proposal, or an interview is tomorrow — your stories, case studies, and proposals are ready to deploy.</p>
+      </div>
+      <div class="phil-card">
+        <h3>📈 Compound Returns</h3>
+        <p>Every decision you log, every story you capture — it compounds. In 6 months, you'll have a library of 50+ stories and 10+ case studies that no one else can replicate.</p>
+      </div>
+      <div class="phil-card">
+        <h3>🤖 AI-Ready Positioning</h3>
+        <p>The market in 2026 demands AI literacy. Your toolkit includes AI-specific sections, frameworks, and vocabulary that position you at the cutting edge.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="hub-footer">
+    <p>Built for Shravan Parlapally — UX Career Toolkit v1.0</p>
+  </footer>
+
+</div>
+</body>
+</html>

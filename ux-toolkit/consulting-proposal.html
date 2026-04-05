@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX Consulting Proposal Generator</title>
+<style>
+:root{--bg:#0a0a0f;--bg2:#12121a;--card:#1a1a25;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--text:#eee;--text2:#999;--text3:#666;--accent:#3b82f6;--accent2:#93c5fd;--accent-bg:rgba(59,130,246,0.1);--font:'Segoe UI',system-ui,sans-serif;--radius:14px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+.app{max-width:860px;margin:0 auto;padding:24px}
+a.back{color:var(--text2);text-decoration:none;font-size:0.85rem}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.header h1{font-size:1.5rem;font-weight:800}
+.btn{padding:8px 16px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--border2)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.proposal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.prop-section{padding:32px;border-bottom:1px solid var(--border)}
+.prop-section:last-child{border-bottom:none}
+.prop-label{font-size:0.7rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px}
+
+.editable{outline:none;border-radius:4px;transition:background 0.2s}
+.editable:hover{background:rgba(59,130,246,0.04)}
+.editable:focus{background:rgba(59,130,246,0.06);box-shadow:0 0 0 2px rgba(59,130,246,0.3)}
+.editable[data-ph]:empty::before{content:attr(data-ph);color:var(--text3);font-style:italic}
+
+.prop-title{font-size:1.6rem;font-weight:900;letter-spacing:-0.02em;margin-bottom:8px}
+.prop-subtitle{font-size:1rem;color:var(--text2);line-height:1.6}
+.prop-body{font-size:0.92rem;color:var(--text2);line-height:1.7}
+.prop-body p{margin-bottom:10px}
+
+.meta-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px}
+.meta-item{padding:16px;border-radius:12px;background:var(--bg2);border:1px solid var(--border)}
+.meta-item label{display:block;font-size:0.7rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+.meta-item .val{font-size:0.92rem;font-weight:600}
+
+/* Tiers */
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+.tier{padding:24px;border-radius:12px;background:var(--bg2);border:1px solid var(--border);text-align:center;transition:all 0.2s}
+.tier:hover{border-color:var(--accent);box-shadow:0 8px 30px rgba(0,0,0,0.3)}
+.tier.featured{border-color:var(--accent);background:var(--accent-bg)}
+.tier-name{font-size:0.75rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px}
+.tier-price{font-size:1.8rem;font-weight:900;margin-bottom:4px}
+.tier-unit{font-size:0.75rem;color:var(--text3);margin-bottom:16px}
+.tier-features{text-align:left;font-size:0.82rem;color:var(--text2);list-style:none}
+.tier-features li{padding:4px 0;padding-left:16px;position:relative}
+.tier-features li::before{content:'✓';position:absolute;left:0;color:var(--accent);font-size:0.75rem;font-weight:700}
+
+/* Deliverables */
+.deliverables{margin-top:16px}
+.deliv-item{padding:12px 16px;border-radius:10px;background:var(--bg2);border:1px solid var(--border);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.deliv-item .name{font-size:0.88rem;font-weight:600}
+.deliv-item .timeline{font-size:0.78rem;color:var(--text3)}
+
+.actions-bar{display:flex;gap:8px;justify-content:flex-end;margin-top:24px}
+
+@media print{
+  body{background:white;color:#1a1a1a}
+  .prop-section{border-color:#e5e5e5}
+  .editable:hover,.editable:focus{background:none;box-shadow:none}
+  .back,.actions-bar,.header{display:none!important}
+  .proposal{border:none;box-shadow:none}
+  .meta-item,.tier,.deliv-item{background:#f8f8f8;border-color:#ddd}
+  .prop-label,.tier-name{color:var(--accent)}
+}
+@media(max-width:640px){.tiers,.meta-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <a href="index.html" class="back">← Back to Toolkit</a>
+  <div class="header">
+    <h1>💼 Consulting Proposal</h1>
+    <div style="display:flex;gap:8px">
+      <button class="btn" onclick="saveProp()">Save</button>
+      <button class="btn btn-primary" onclick="window.print()">Export PDF</button>
+    </div>
+  </div>
+
+  <div class="proposal" id="proposal">
+
+    <div class="prop-section">
+      <div class="prop-label">Proposal</div>
+      <div class="prop-title editable" contenteditable="true" data-ph="Project Title">AI-Powered Dashboard UX Redesign</div>
+      <div class="prop-subtitle editable" contenteditable="true" data-ph="Brief description">A comprehensive UX design engagement to transform your AI analytics platform into an intuitive, trustworthy experience that drives adoption and retention.</div>
+      <div class="meta-grid">
+        <div class="meta-item"><label>Prepared For</label><div class="val editable" contenteditable="true" data-ph="Client Name">Acme Corp — Sarah Johnson, VP Product</div></div>
+        <div class="meta-item"><label>Prepared By</label><div class="val editable" contenteditable="true" data-ph="Your Name">Shravan Parlapally — AI Product Designer</div></div>
+        <div class="meta-item"><label>Date</label><div class="val editable" contenteditable="true" data-ph="Date">April 2026</div></div>
+        <div class="meta-item"><label>Validity</label><div class="val editable" contenteditable="true" data-ph="30 days">Valid for 30 days</div></div>
+      </div>
+    </div>
+
+    <div class="prop-section">
+      <div class="prop-label">The Challenge</div>
+      <div class="prop-body editable" contenteditable="true" data-ph="Describe the client's problem...">
+        <p>Your AI analytics platform has powerful capabilities, but users report low engagement (18% WAU) and express distrust in AI-generated insights. The current interface surfaces predictions without context, leaving users confused about why specific actions are recommended.</p>
+        <p>This creates a direct revenue impact: low adoption means low renewal rates, and your NPS has dropped 15 points in the last quarter.</p>
+      </div>
+    </div>
+
+    <div class="prop-section">
+      <div class="prop-label">My Approach</div>
+      <div class="prop-body editable" contenteditable="true" data-ph="Describe your approach...">
+        <p>With 15 years of product design experience — including deep expertise in AI/ML interfaces — I'll lead a structured engagement that moves from research to shipped design in 8 weeks.</p>
+        <p>My approach centres on three pillars: <strong>Explainable AI</strong> (making AI decisions transparent), <strong>Progressive Trust</strong> (building confidence through small wins), and <strong>Measurable Design</strong> (tying every design decision to a KPI).</p>
+      </div>
+    </div>
+
+    <div class="prop-section">
+      <div class="prop-label">Deliverables & Timeline</div>
+      <div class="deliverables">
+        <div class="deliv-item"><span class="name editable" contenteditable="true">Research Report & User Journey Map</span><span class="timeline editable" contenteditable="true">Week 1–2</span></div>
+        <div class="deliv-item"><span class="name editable" contenteditable="true">Information Architecture & User Flows</span><span class="timeline editable" contenteditable="true">Week 3</span></div>
+        <div class="deliv-item"><span class="name editable" contenteditable="true">High-Fidelity Design System & Mockups</span><span class="timeline editable" contenteditable="true">Week 4–6</span></div>
+        <div class="deliv-item"><span class="name editable" contenteditable="true">Usability Testing Report (2 rounds)</span><span class="timeline editable" contenteditable="true">Week 5–7</span></div>
+        <div class="deliv-item"><span class="name editable" contenteditable="true">Developer Handoff & Design QA</span><span class="timeline editable" contenteditable="true">Week 7–8</span></div>
+        <div class="deliv-item"><span class="name editable" contenteditable="true">Post-Launch Metrics Review</span><span class="timeline editable" contenteditable="true">Week 12</span></div>
+      </div>
+    </div>
+
+    <div class="prop-section">
+      <div class="prop-label">Investment</div>
+      <div class="tiers">
+        <div class="tier">
+          <div class="tier-name">Advisory</div>
+          <div class="tier-price editable" contenteditable="true">$5,000</div>
+          <div class="tier-unit editable" contenteditable="true">per month</div>
+          <ul class="tier-features">
+            <li>4 hours/week strategic guidance</li>
+            <li>Design reviews & feedback</li>
+            <li>Team mentoring sessions</li>
+            <li>Async Slack/email support</li>
+          </ul>
+        </div>
+        <div class="tier featured">
+          <div class="tier-name">Recommended: Embedded</div>
+          <div class="tier-price editable" contenteditable="true">$18,000</div>
+          <div class="tier-unit editable" contenteditable="true">fixed (8 weeks)</div>
+          <ul class="tier-features">
+            <li>All Advisory services</li>
+            <li>Full design execution</li>
+            <li>User research & testing</li>
+            <li>Design system creation</li>
+            <li>Developer handoff</li>
+            <li>Post-launch review</li>
+          </ul>
+        </div>
+        <div class="tier">
+          <div class="tier-name">Fractional Lead</div>
+          <div class="tier-price editable" contenteditable="true">$12,000</div>
+          <div class="tier-unit editable" contenteditable="true">per month</div>
+          <ul class="tier-features">
+            <li>3 days/week embedded</li>
+            <li>Lead your design team</li>
+            <li>Process & culture building</li>
+            <li>Hiring & onboarding support</li>
+            <li>Executive stakeholder alignment</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="prop-section">
+      <div class="prop-label">Why Me</div>
+      <div class="prop-body editable" contenteditable="true" data-ph="Why you're the right person...">
+        <p><strong>15 years of product design experience</strong> spanning enterprise SaaS, health-tech, and AI-native products. I've shipped 50+ products impacting 30M+ users.</p>
+        <p><strong>Deep AI/ML design expertise</strong> — I don't just design interfaces for AI; I understand the technical constraints of ML models, prompt engineering, and how to design for uncertainty, confidence levels, and explainability.</p>
+        <p><strong>I measure everything</strong> — every design decision ties back to a business metric. My last three projects delivered 40%+ improvement in their primary KPIs.</p>
+      </div>
+    </div>
+
+    <div class="prop-section">
+      <div class="prop-label">Next Steps</div>
+      <div class="prop-body editable" contenteditable="true" data-ph="How to proceed...">
+        <p>1. <strong>30-minute call</strong> to discuss your specific challenges and align on scope</p>
+        <p>2. <strong>Refined proposal</strong> with customised timeline and investment</p>
+        <p>3. <strong>Kick-off</strong> — we start with a discovery sprint in week 1</p>
+        <p>Ready to get started? Reach me at <strong>shr1.gamer@gmail.com</strong></p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="actions-bar">
+    <button class="btn" onclick="saveProp()">Save Draft</button>
+    <button class="btn btn-primary" onclick="window.print()">Export as PDF</button>
+  </div>
+</div>
+
+<script>
+const KEY='ux-consulting-proposal';
+
+// Save
+function saveProp(){
+  const data={};
+  document.querySelectorAll('.editable').forEach((el,i)=>{data['f'+i]=el.innerHTML});
+  localStorage.setItem(KEY,JSON.stringify(data));
+  alert('Proposal saved!');
+}
+
+// Load
+const saved=localStorage.getItem(KEY);
+if(saved){
+  try{
+    const data=JSON.parse(saved);
+    document.querySelectorAll('.editable').forEach((el,i)=>{if(data['f'+i])el.innerHTML=data['f'+i]});
+  }catch(e){}
+}
+
+// Autosave
+let timer;
+document.addEventListener('input',e=>{
+  if(e.target.classList.contains('editable')){
+    clearTimeout(timer);
+    timer=setTimeout(()=>{
+      const data={};
+      document.querySelectorAll('.editable').forEach((el,i)=>{data['f'+i]=el.innerHTML});
+      localStorage.setItem(KEY,JSON.stringify(data));
+    },2000);
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX Knowledge Base — Second Brain</title>
+<style>
+:root{--bg:#0a0a0f;--bg2:#12121a;--card:#1a1a25;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--text:#eee;--text2:#999;--text3:#666;--accent:#ec4899;--accent2:#f9a8d4;--accent-bg:rgba(236,72,153,0.1);--font:'Segoe UI',system-ui,sans-serif;--radius:14px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+.app{max-width:900px;margin:0 auto;padding:24px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px}
+.header h1{font-size:1.5rem;font-weight:800}
+.header-actions{display:flex;gap:8px}
+.btn{padding:8px 16px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--border2)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-primary:hover{background:#db2777}
+.btn-sm{padding:5px 10px;font-size:0.75rem}
+.btn-danger{border-color:rgba(239,68,68,0.3);color:#ef4444}
+a.back{color:var(--text2);text-decoration:none;font-size:0.85rem}
+
+.tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:0}
+.tab{padding:10px 18px;font-size:0.85rem;font-weight:600;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--accent2);border-color:var(--accent)}
+
+.tab-content{display:none}.tab-content.active{display:block}
+
+.search-bar{position:relative;margin-bottom:20px}
+.search-bar input{width:100%;padding:10px 14px 10px 38px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:0.88rem;outline:none}
+.search-bar input:focus{border-color:var(--accent)}
+.search-bar svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3)}
+
+.entries{display:flex;flex-direction:column;gap:14px}
+.kb-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:all 0.25s;position:relative}
+.kb-card:hover{border-color:var(--border2);box-shadow:0 8px 30px rgba(0,0,0,0.3)}
+.kb-card h3{font-size:1rem;font-weight:700;margin-bottom:8px}
+.kb-card p,.kb-card .body{font-size:0.88rem;color:var(--text2);line-height:1.7;white-space:pre-wrap}
+.kb-card .category{font-size:0.7rem;padding:3px 10px;border-radius:100px;background:var(--accent-bg);color:var(--accent2);font-weight:600;display:inline-block;margin-bottom:8px}
+.kb-actions{position:absolute;top:16px;right:16px;display:flex;gap:6px;opacity:0;transition:opacity 0.2s}
+.kb-card:hover .kb-actions{opacity:1}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-state .icon{font-size:3rem;margin-bottom:16px;opacity:0.5}
+.empty-state h3{font-size:1.1rem;font-weight:700;color:var(--text2);margin-bottom:8px}
+.empty-state p{font-size:0.88rem;max-width:450px;margin:0 auto;line-height:1.6}
+
+.form-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+.form-overlay.open{display:flex}
+.form-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:32px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto}
+.form-card h2{font-size:1.2rem;font-weight:800;margin-bottom:20px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:0.78rem;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:0.88rem;outline:none}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--accent)}
+.form-group textarea{min-height:120px;resize:vertical;line-height:1.7}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+
+/* Starter prompts */
+.prompts{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-bottom:24px}
+.prompt-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s}
+.prompt-card:hover{border-color:var(--accent);background:var(--accent-bg)}
+.prompt-card h4{font-size:0.85rem;font-weight:700;margin-bottom:4px}
+.prompt-card p{font-size:0.78rem;color:var(--text3)}
+</style>
+</head>
+<body>
+<div class="app">
+  <a href="index.html" class="back">← Back to Toolkit</a>
+  <div class="header">
+    <h1>🧠 UX Knowledge Base</h1>
+    <div class="header-actions">
+      <button class="btn" onclick="exportKB()">Export</button>
+      <button class="btn btn-primary" onclick="openForm()">+ Add Entry</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('principles')">My Principles</div>
+    <div class="tab" onclick="switchTab('frameworks')">Frameworks</div>
+    <div class="tab" onclick="switchTab('lessons')">Lessons Learned</div>
+    <div class="tab" onclick="switchTab('pov')">Points of View</div>
+  </div>
+
+  <div class="search-bar">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="search" placeholder="Search your knowledge base..." oninput="render()">
+  </div>
+
+  <div id="starterPrompts" class="prompts"></div>
+  <div class="entries" id="entries"></div>
+</div>
+
+<div class="form-overlay" id="formOverlay" onclick="if(event.target===this)closeForm()">
+  <div class="form-card">
+    <h2 id="formTitle">Add to Knowledge Base</h2>
+    <input type="hidden" id="editId">
+    <div class="form-group">
+      <label>Title</label>
+      <input type="text" id="f-title" placeholder="e.g., My principle: Always prototype with real AI outputs">
+    </div>
+    <div class="form-group">
+      <label>Category</label>
+      <select id="f-category">
+        <option value="principles">Design Principle</option>
+        <option value="frameworks">Framework / Mental Model</option>
+        <option value="lessons">Lesson Learned</option>
+        <option value="pov">Point of View / Hot Take</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Content</label>
+      <textarea id="f-body" placeholder="Write in your own voice. This is YOUR knowledge — your unique perspective shaped by 15 years of experience."></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn" onclick="closeForm()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEntry()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE='ux-knowledge-base';
+let items=JSON.parse(localStorage.getItem(STORAGE)||'[]');
+let activeTab='principles';
+
+const starters={
+  principles:[
+    {t:'What is your #1 design principle?',d:'The one thing you believe most strongly about design.'},
+    {t:'How do you approach ambiguity?',d:'When requirements are unclear, what do you do first?'},
+    {t:'What makes AI design different?',d:'Your unique take on designing for AI vs traditional products.'},
+  ],
+  frameworks:[
+    {t:'Your go-to research framework',d:'How do you structure user research for a new project?'},
+    {t:'How you evaluate design trade-offs',d:'When there are competing priorities, how do you decide?'},
+    {t:'Your stakeholder alignment process',d:'How you get buy-in from engineers, PMs, and executives.'},
+  ],
+  lessons:[
+    {t:'Your biggest design failure',d:'What happened and what did you learn?'},
+    {t:'When you changed your mind',d:'A time when user research proved your assumptions wrong.'},
+    {t:'The project that shaped you most',d:'Which project made you the designer you are today?'},
+  ],
+  pov:[
+    {t:'A contrarian design opinion you hold',d:'Something you believe that most designers disagree with.'},
+    {t:'Your take on AI replacing designers',d:'Where you stand on the AI + design debate.'},
+    {t:'What most portfolios get wrong',d:'Your perspective on what makes a great case study.'},
+  ]
+};
+
+function switchTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['principles','frameworks','lessons','pov'][i]===tab));
+  render();
+}
+
+function render(){
+  const search=document.getElementById('search').value.toLowerCase();
+  const filtered=items.filter(item=>{
+    if(item.category!==activeTab)return false;
+    if(search){return(item.title+' '+item.body).toLowerCase().includes(search)}
+    return true;
+  });
+
+  // Starter prompts
+  const promptsEl=document.getElementById('starterPrompts');
+  const tabStarters=starters[activeTab]||[];
+  const hasEntries=items.filter(i=>i.category===activeTab).length>0;
+  if(!hasEntries&&!search){
+    promptsEl.innerHTML=tabStarters.map(s=>`<div class="prompt-card" onclick="openFormWith('${s.t}')"><h4>${s.t}</h4><p>${s.d}</p></div>`).join('');
+  } else {
+    promptsEl.innerHTML='';
+  }
+
+  const container=document.getElementById('entries');
+  if(!filtered.length){
+    container.innerHTML=`<div class="empty-state"><div class="icon">🧠</div><h3>${search?'No matches':'Start documenting your knowledge'}</h3><p>Click "+ Add Entry" or use the prompts above to start capturing what makes your expertise unique.</p></div>`;
+    return;
+  }
+
+  container.innerHTML=filtered.map(item=>`
+    <div class="kb-card">
+      <div class="kb-actions">
+        <button class="btn btn-sm" onclick="editEntry('${item.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteEntry('${item.id}')">Delete</button>
+      </div>
+      <span class="category">${item.category}</span>
+      <h3>${esc(item.title)}</h3>
+      <div class="body">${esc(item.body)}</div>
+    </div>
+  `).join('');
+}
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function persist(){localStorage.setItem(STORAGE,JSON.stringify(items))}
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
+
+function openForm(){
+  document.getElementById('formOverlay').classList.add('open');
+  document.getElementById('editId').value='';
+  document.getElementById('f-title').value='';
+  document.getElementById('f-category').value=activeTab;
+  document.getElementById('f-body').value='';
+}
+function openFormWith(title){openForm();document.getElementById('f-title').value=title}
+function closeForm(){document.getElementById('formOverlay').classList.remove('open')}
+
+function saveEntry(){
+  const id=document.getElementById('editId').value;
+  const entry={id:id||uid(),title:document.getElementById('f-title').value.trim(),category:document.getElementById('f-category').value,body:document.getElementById('f-body').value.trim()};
+  if(!entry.title){alert('Title is required');return}
+  if(id){const idx=items.findIndex(i=>i.id===id);if(idx>-1)items[idx]=entry}else items.push(entry);
+  persist();closeForm();render();
+}
+
+function editEntry(id){
+  const item=items.find(i=>i.id===id);if(!item)return;
+  openForm();document.getElementById('editId').value=item.id;
+  document.getElementById('f-title').value=item.title;
+  document.getElementById('f-category').value=item.category;
+  document.getElementById('f-body').value=item.body;
+}
+
+function deleteEntry(id){if(!confirm('Delete?'))return;items=items.filter(i=>i.id!==id);persist();render()}
+function exportKB(){const b=new Blob([JSON.stringify(items,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='ux-knowledge-base.json';a.click()}
+
+render();
+</script>
+</body>
+</html>
