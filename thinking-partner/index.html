@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thinking Partner — Structured Reasoning Tool</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-grid"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<div class="noise"></div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 1 · WELCOME
+═══════════════════════════════════════════════ -->
+<div id="screen-welcome" class="screen active">
+  <div class="welcome-wrap">
+    <a href="../ux-toolkit/index.html" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+      UX Toolkit
+    </a>
+    <div class="welcome-badge">
+      <span class="badge-pulse"></span>
+      AI-Powered Reasoning
+    </div>
+    <h1 class="welcome-title">
+      Your <span class="grad-text">Thinking</span><br>Partner
+    </h1>
+    <p class="welcome-sub">
+      Structured frameworks to help you think deeper, challenge assumptions,
+      and reach clearer decisions — one question at a time.
+    </p>
+    <div class="welcome-frameworks">
+      <span class="fw-pill">🔬 First Principles</span>
+      <span class="fw-pill">😈 Devil's Advocate</span>
+      <span class="fw-pill">🌐 Systems Thinking</span>
+      <span class="fw-pill">💡 Lateral Thinking</span>
+      <span class="fw-pill">⚰️ Pre-Mortem</span>
+      <span class="fw-pill">🎯 Jobs-to-be-Done</span>
+    </div>
+    <button class="btn-primary" id="btn-start">
+      Start a Session
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+    <div class="welcome-how">
+      <div class="how-step">
+        <div class="how-num">01</div>
+        <div class="how-text">Describe your challenge</div>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-step">
+        <div class="how-num">02</div>
+        <div class="how-text">Pick a thinking framework</div>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-step">
+        <div class="how-num">03</div>
+        <div class="how-text">Answer 6 guided questions</div>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-step">
+        <div class="how-num">04</div>
+        <div class="how-text">Export your insights</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 2 · SETUP
+═══════════════════════════════════════════════ -->
+<div id="screen-setup" class="screen">
+  <div class="setup-wrap">
+    <button class="btn-back" id="btn-back-setup">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+      Back
+    </button>
+    <div class="setup-header">
+      <h2>Set the Stage</h2>
+      <p>Tell me what you're working through, then choose how to think about it.</p>
+    </div>
+
+    <!-- Problem Input -->
+    <div class="field-group">
+      <label class="field-label" for="problem-input">
+        What's your challenge or question?
+        <span class="field-hint">Be as specific as possible — the more detail, the better the questions.</span>
+      </label>
+      <textarea
+        id="problem-input"
+        class="field-textarea"
+        placeholder="e.g. I'm trying to decide whether to leave my stable job to join an early-stage startup. I've been offered an equity package but the company is pre-revenue…"
+        rows="4"
+      ></textarea>
+      <div class="char-counter"><span id="char-count">0</span> / 500</div>
+    </div>
+
+    <!-- Framework Selection -->
+    <div class="field-group">
+      <label class="field-label">
+        Choose your thinking framework
+        <span class="field-hint">Each framework unlocks a different set of 6 guided questions.</span>
+      </label>
+      <div class="framework-grid" id="framework-grid">
+
+        <div class="fw-card" data-framework="first-principles">
+          <div class="fw-card-icon">🔬</div>
+          <div class="fw-card-body">
+            <h3>First Principles</h3>
+            <p>Strip away assumptions. Get to the irreducible truth of the problem.</p>
+            <div class="fw-card-tags">
+              <span class="tag">Analytical</span>
+              <span class="tag">Clarity</span>
+            </div>
+          </div>
+          <div class="fw-card-check">✓</div>
+        </div>
+
+        <div class="fw-card" data-framework="devils-advocate">
+          <div class="fw-card-icon">😈</div>
+          <div class="fw-card-body">
+            <h3>Devil's Advocate</h3>
+            <p>Challenge your own beliefs. Stress-test ideas before committing.</p>
+            <div class="fw-card-tags">
+              <span class="tag">Critical</span>
+              <span class="tag">Risk-aware</span>
+            </div>
+          </div>
+          <div class="fw-card-check">✓</div>
+        </div>
+
+        <div class="fw-card" data-framework="systems-thinking">
+          <div class="fw-card-icon">🌐</div>
+          <div class="fw-card-body">
+            <h3>Systems Thinking</h3>
+            <p>See feedback loops, leverage points, and second-order effects.</p>
+            <div class="fw-card-tags">
+              <span class="tag">Holistic</span>
+              <span class="tag">Strategic</span>
+            </div>
+          </div>
+          <div class="fw-card-check">✓</div>
+        </div>
+
+        <div class="fw-card" data-framework="lateral-thinking">
+          <div class="fw-card-icon">💡</div>
+          <div class="fw-card-body">
+            <h3>Lateral Thinking</h3>
+            <p>Break out of conventional patterns. Find the unexpected angle.</p>
+            <div class="fw-card-tags">
+              <span class="tag">Creative</span>
+              <span class="tag">Divergent</span>
+            </div>
+          </div>
+          <div class="fw-card-check">✓</div>
+        </div>
+
+        <div class="fw-card" data-framework="pre-mortem">
+          <div class="fw-card-icon">⚰️</div>
+          <div class="fw-card-body">
+            <h3>Pre-Mortem</h3>
+            <p>Imagine failure in advance. Identify and prevent likely pitfalls.</p>
+            <div class="fw-card-tags">
+              <span class="tag">Defensive</span>
+              <span class="tag">Preventive</span>
+            </div>
+          </div>
+          <div class="fw-card-check">✓</div>
+        </div>
+
+        <div class="fw-card" data-framework="jtbd">
+          <div class="fw-card-icon">🎯</div>
+          <div class="fw-card-body">
+            <h3>Jobs-to-be-Done</h3>
+            <p>Uncover the real underlying need. Define what "done" actually means.</p>
+            <div class="fw-card-tags">
+              <span class="tag">User-centered</span>
+              <span class="tag">Needs-focused</span>
+            </div>
+          </div>
+          <div class="fw-card-check">✓</div>
+        </div>
+
+      </div>
+    </div>
+
+    <button class="btn-primary" id="btn-begin" disabled>
+      Begin Session
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 3 · SESSION
+═══════════════════════════════════════════════ -->
+<div id="screen-session" class="screen">
+  <div class="session-layout">
+
+    <!-- Left: Sidebar -->
+    <aside class="session-sidebar">
+      <button class="btn-back" id="btn-back-session">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+        Setup
+      </button>
+      <div class="sidebar-fw" id="sidebar-fw-icon"></div>
+      <div class="sidebar-fw-name" id="sidebar-fw-name"></div>
+      <div class="sidebar-problem-label">Your challenge</div>
+      <div class="sidebar-problem" id="sidebar-problem"></div>
+      <div class="sidebar-progress">
+        <div class="progress-label">
+          <span>Progress</span>
+          <span id="progress-text">0 / 6</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+      <div class="sidebar-dots" id="sidebar-dots"></div>
+      <div class="sidebar-timer">
+        <div class="timer-icon">⏱</div>
+        <div id="timer-display">0:00</div>
+      </div>
+    </aside>
+
+    <!-- Right: Question Area -->
+    <main class="session-main">
+      <div class="question-header">
+        <span class="q-step" id="q-step">Question 1 of 6</span>
+        <span class="q-tag" id="q-tag"></span>
+      </div>
+      <div class="question-card">
+        <div class="q-orb"></div>
+        <p class="question-text" id="question-text"></p>
+      </div>
+      <div class="thinking-hint" id="thinking-hint"></div>
+      <div class="answer-area">
+        <label class="answer-label">Your thoughts</label>
+        <textarea
+          id="answer-input"
+          class="answer-textarea"
+          placeholder="Take your time. There's no right or wrong answer — just your honest thinking…"
+          rows="6"
+        ></textarea>
+        <div class="answer-meta">
+          <span class="answer-words" id="answer-words">0 words</span>
+          <div class="answer-actions">
+            <button class="btn-insight" id="btn-insight" title="Add a key insight from this answer">
+              ⚡ Mark Insight
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="session-nav">
+        <button class="btn-prev" id="btn-prev" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+          Previous
+        </button>
+        <button class="btn-next" id="btn-next">
+          Next Question
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SCREEN 4 · SUMMARY
+═══════════════════════════════════════════════ -->
+<div id="screen-summary" class="screen">
+  <div class="summary-wrap">
+    <div class="summary-header">
+      <div class="summary-complete-badge">
+        <span>✓</span> Session Complete
+      </div>
+      <h2 class="summary-title">Your Thinking Session</h2>
+      <div class="summary-meta" id="summary-meta"></div>
+    </div>
+
+    <div class="summary-insights" id="summary-insights"></div>
+    <div class="summary-qa" id="summary-qa"></div>
+
+    <div class="summary-actions">
+      <button class="btn-primary" id="btn-export">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Export as Markdown
+      </button>
+      <button class="btn-secondary" id="btn-new-session">
+        Start New Session
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
