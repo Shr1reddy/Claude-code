@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UX Case Study Generator — Powered by Claude</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fafafa; --bg-card: #ffffff; --bg-elevated: #f0f0f3;
+      --text: #1a1a1a; --text-2: #555; --text-3: #999;
+      --accent: #4f46e5; --accent-light: #e0e7ff; --accent-dark: #3730a3;
+      --accent-grad: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      --green: #059669; --green-light: #d1fae5;
+      --amber: #d97706; --amber-light: #fef3c7;
+      --border: #e5e5e5; --border-focus: #a5b4fc;
+      --radius: 12px; --radius-lg: 20px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Space Grotesk', var(--font);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font); background: var(--bg); color: var(--text);
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .gen-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 28px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-left { display: flex; align-items: center; gap: 10px; }
+    .header-logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--accent-grad);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 1rem; font-weight: 700;
+    }
+    .header-brand { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; }
+    .header-badge {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em;
+      padding: 2px 8px; border-radius: 100px;
+      background: var(--accent-light); color: var(--accent);
+      text-transform: uppercase;
+    }
+    .header-right { display: flex; align-items: center; gap: 8px; }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border);
+      background: transparent; font-size: 0.82rem; font-weight: 600;
+      color: var(--text-2); cursor: pointer; transition: all 0.15s;
+      text-decoration: none;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+    /* ── Layout ── */
+    .gen-layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 0;
+      min-height: 100vh;
+      padding-top: 57px;
+    }
+
+    /* ── Input Panel ── */
+    .input-panel {
+      border-right: 1px solid var(--border);
+      background: white;
+      display: flex; flex-direction: column;
+      height: calc(100vh - 57px);
+      overflow-y: auto;
+      position: sticky; top: 57px;
+    }
+    .input-panel::-webkit-scrollbar { width: 4px; }
+    .input-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .panel-header {
+      padding: 28px 28px 20px;
+      border-bottom: 1px solid var(--bg-elevated);
+    }
+    .panel-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; }
+    .panel-sub { font-size: 0.82rem; color: var(--text-2); line-height: 1.5; }
+
+    .panel-body { padding: 20px 28px; flex: 1; display: flex; flex-direction: column; gap: 18px; }
+
+    .field-group { display: flex; flex-direction: column; gap: 6px; }
+    .field-label {
+      font-size: 0.78rem; font-weight: 700; color: var(--text-2);
+      text-transform: uppercase; letter-spacing: 0.06em;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .field-label .required { color: var(--accent); }
+    .field-hint { font-size: 0.74rem; color: var(--text-3); margin-top: -3px; }
+
+    .field-input, .field-textarea {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid var(--border); border-radius: var(--radius);
+      font-family: var(--font); font-size: 0.875rem; color: var(--text);
+      background: var(--bg); transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none; line-height: 1.6;
+    }
+    .field-input:focus, .field-textarea:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+      background: white;
+    }
+    .field-textarea { resize: vertical; min-height: 90px; }
+    .field-textarea.tall { min-height: 110px; }
+
+    /* API key field */
+    .api-key-group {
+      background: var(--bg-elevated); border-radius: var(--radius);
+      padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .api-key-row { display: flex; gap: 8px; align-items: stretch; }
+    .api-key-row .field-input { flex: 1; font-family: monospace; font-size: 0.8rem; }
+    .btn-icon {
+      padding: 0 12px; border: 1.5px solid var(--border); border-radius: var(--radius);
+      background: white; cursor: pointer; color: var(--text-2);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; flex-shrink: 0;
+    }
+    .btn-icon:hover { border-color: var(--accent); color: var(--accent); }
+    .api-note { font-size: 0.72rem; color: var(--text-3); line-height: 1.4; }
+    .api-note a { color: var(--accent); text-decoration: none; }
+    .api-note a:hover { text-decoration: underline; }
+
+    /* Divider */
+    .divider { display: flex; align-items: center; gap: 12px; }
+    .divider-line { flex: 1; height: 1px; background: var(--border); }
+    .divider-text { font-size: 0.72rem; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+
+    /* Optional fields collapsed */
+    .optional-section {
+      border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden;
+    }
+    .optional-toggle {
+      width: 100%; padding: 10px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--bg-elevated); border: none; cursor: pointer;
+      font-family: var(--font); font-size: 0.82rem; font-weight: 600; color: var(--text-2);
+      transition: background 0.15s;
+    }
+    .optional-toggle:hover { background: var(--accent-light); color: var(--accent); }
+    .optional-toggle svg { transition: transform 0.2s; }
+    .optional-toggle.open svg { transform: rotate(180deg); }
+    .optional-body {
+      display: none; padding: 14px; background: white;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .optional-body.open { display: flex; }
+    .optional-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* Generate button */
+    .panel-footer { padding: 16px 28px 24px; }
+    .btn-generate {
+      width: 100%; padding: 14px 20px;
+      background: var(--accent-grad); color: white;
+      border: none; border-radius: var(--radius); cursor: pointer;
+      font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: all 0.2s; box-shadow: 0 4px 14px rgba(79,70,229,0.35);
+      position: relative; overflow: hidden;
+    }
+    .btn-generate:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79,70,229,0.4); }
+    .btn-generate:active { transform: translateY(0); }
+    .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-generate .btn-shine {
+      position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      animation: shine 2s infinite 1s;
+    }
+    @keyframes shine { 0% { left: -100%; } 100% { left: 200%; } }
+
+    /* ── Output Panel ── */
+    .output-panel {
+      padding: 32px 36px 60px;
+      overflow-y: auto;
+    }
+
+    /* Empty state */
+    .empty-state {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: calc(100vh - 120px); text-align: center; gap: 16px;
+    }
+    .empty-icon {
+      width: 72px; height: 72px; border-radius: 20px;
+      background: var(--accent-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+    }
+    .empty-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; }
+    .empty-sub { font-size: 0.875rem; color: var(--text-2); max-width: 360px; line-height: 1.6; }
+    .pillar-list {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      margin-top: 8px; text-align: left; max-width: 440px;
+    }
+    .pillar-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 8px;
+      background: white; border: 1px solid var(--border);
+      font-size: 0.78rem; font-weight: 500; color: var(--text-2);
+    }
+    .pillar-item .pill-num {
+      width: 20px; height: 20px; border-radius: 6px;
+      background: var(--accent-light); color: var(--accent);
+      font-size: 0.65rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    /* ── Generating State ── */
+    .generating-view { display: none; flex-direction: column; gap: 0; }
+    .generating-view.active { display: flex; }
+
+    .gen-header-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .gen-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; }
+    .gen-status {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.8rem; font-weight: 600; color: var(--accent);
+    }
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid var(--accent-light);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .progress-pillars { display: flex; flex-direction: column; gap: 4px; margin-bottom: 28px; }
+    .pillar-progress {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; border-radius: 10px;
+      background: white; border: 1px solid var(--border);
+      transition: all 0.3s; opacity: 0.4;
+    }
+    .pillar-progress.active { opacity: 1; border-color: var(--border-focus); box-shadow: 0 0 0 2px rgba(79,70,229,0.1); }
+    .pillar-progress.done { opacity: 1; background: var(--green-light); border-color: #6ee7b7; }
+    .pillar-progress-icon {
+      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
+      background: var(--bg-elevated); color: var(--text-3);
+      transition: all 0.3s;
+    }
+    .pillar-progress.active .pillar-progress-icon { background: var(--accent-light); color: var(--accent); }
+    .pillar-progress.done .pillar-progress-icon { background: var(--green); color: white; }
+    .pillar-progress-label { font-size: 0.82rem; font-weight: 600; color: var(--text-2); flex: 1; }
+    .pillar-progress.active .pillar-progress-label { color: var(--accent); }
+    .pillar-progress.done .pillar-progress-label { color: var(--green); }
+    .pillar-check { color: var(--green); opacity: 0; transition: opacity 0.3s; }
+    .pillar-progress.done .pillar-check { opacity: 1; }
+
+    /* Thinking stream */
+    .thinking-box {
+      background: #0f0f11; border-radius: var(--radius-lg); padding: 16px 20px;
+      font-family: 'Monaco', 'Consolas', monospace; font-size: 0.75rem;
+      color: #a3e635; line-height: 1.7; max-height: 180px; overflow-y: auto;
+      margin-bottom: 20px;
+    }
+    .thinking-box::-webkit-scrollbar { width: 3px; }
+    .thinking-box::-webkit-scrollbar-thumb { background: #333; }
+    .thinking-cursor {
+      display: inline-block; width: 7px; height: 13px;
+      background: #a3e635; margin-left: 2px; vertical-align: middle;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── Results State ── */
+    .results-view { display: none; flex-direction: column; gap: 0; }
+    .results-view.active { display: flex; }
+
+    .results-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 28px; gap: 16px; flex-wrap: wrap;
+    }
+    .results-title-block {}
+    .results-main-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; margin-bottom: 4px; }
+    .results-sub { font-size: 0.82rem; color: var(--text-2); }
+    .results-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: var(--radius); border: none;
+      background: var(--accent-grad); color: white; cursor: pointer;
+      font-family: var(--font); font-size: 0.875rem; font-weight: 700;
+      transition: all 0.15s; box-shadow: 0 2px 8px rgba(79,70,229,0.3);
+      text-decoration: none;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(79,70,229,0.4); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 16px; border-radius: var(--radius);
+      border: 1.5px solid var(--border); background: white;
+      font-family: var(--font); font-size: 0.875rem; font-weight: 600;
+      color: var(--text-2); cursor: pointer; transition: all 0.15s;
+      text-decoration: none;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Pillar cards */
+    .pillars-grid { display: flex; flex-direction: column; gap: 12px; }
+    .pillar-card {
+      background: white; border: 1px solid var(--border); border-radius: var(--radius-lg);
+      overflow: hidden;
+      transform: translateY(12px); opacity: 0;
+      animation: cardIn 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    @keyframes cardIn {
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .pillar-card-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px; background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+    .pillar-card-num {
+      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+      background: var(--accent-grad); color: white;
+      font-size: 0.65rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pillar-card-name { font-weight: 700; font-size: 0.875rem; flex: 1; }
+    .pillar-card-body { padding: 16px 18px; }
+    .pillar-preview { font-size: 0.82rem; color: var(--text-2); line-height: 1.6; }
+    .pillar-preview p { margin-bottom: 6px; }
+    .pillar-preview p:last-child { margin-bottom: 0; }
+    .pillar-preview strong { color: var(--text); }
+    .pillar-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .chip {
+      padding: 4px 10px; border-radius: 100px;
+      background: var(--accent-light); color: var(--accent);
+      font-size: 0.72rem; font-weight: 600;
+    }
+    .chip.green { background: var(--green-light); color: var(--green); }
+    .chip.amber { background: var(--amber-light); color: var(--amber); }
+    .metric-row {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
+    }
+    .metric-chip {
+      display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+      border-radius: var(--radius); background: var(--bg-elevated); font-size: 0.78rem;
+    }
+    .metric-before { color: var(--text-3); text-decoration: line-through; }
+    .metric-arrow { color: var(--green); font-weight: 700; }
+    .metric-after { color: var(--green); font-weight: 700; }
+    .metric-label { color: var(--text-2); margin-left: 2px; }
+
+    .error-banner {
+      display: none; padding: 14px 18px; border-radius: var(--radius);
+      background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b;
+      font-size: 0.82rem; line-height: 1.5; margin-bottom: 20px;
+    }
+    .error-banner.show { display: block; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .gen-layout { grid-template-columns: 1fr; }
+      .input-panel { height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); }
+      .output-panel { padding: 24px 20px 60px; }
+      .pillar-list { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .gen-header { padding: 10px 16px; }
+      .header-badge { display: none; }
+      .panel-body { padding: 16px 20px; }
+      .panel-footer { padding: 12px 20px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="gen-header">
+  <div class="header-left">
+    <div class="header-logo">◆</div>
+    <span class="header-brand">Case Study Generator</span>
+    <span class="header-badge">Claude AI</span>
+  </div>
+  <div class="header-right">
+    <a href="index.html" class="btn-ghost">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Open Builder
+    </a>
+  </div>
+</header>
+
+<!-- ── Main Layout ── -->
+<div class="gen-layout">
+
+  <!-- ── Left: Input Panel ── -->
+  <aside class="input-panel">
+    <div class="panel-header">
+      <h1 class="panel-title">Generate Your Case Study</h1>
+      <p class="panel-sub">Describe your project in plain language. Claude will structure it across 10 UX pillars and pre-fill the builder.</p>
+    </div>
+
+    <div class="panel-body">
+
+      <!-- API Key -->
+      <div class="api-key-group">
+        <div class="field-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+          Claude API Key
+        </div>
+        <div class="api-key-row">
+          <input type="password" id="apiKey" class="field-input" placeholder="sk-ant-api03-..." autocomplete="off">
+          <button class="btn-icon" onclick="toggleApiKeyVisibility()" title="Show/hide key" id="apiKeyToggle">
+            <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <p class="api-note">Your key is stored only in this browser. Get one at <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a></p>
+      </div>
+
+      <!-- Problem -->
+      <div class="field-group">
+        <label class="field-label" for="problem">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Problem Statement <span class="required">*</span>
+        </label>
+        <p class="field-hint">What pain point or opportunity triggered this project?</p>
+        <textarea id="problem" class="field-textarea tall" placeholder="e.g. Users were abandoning checkout at 73% because the payment flow had 9 steps and no progress indication. Mobile drop-off was especially high. The business needed to recover an estimated $2M/year in lost revenue."></textarea>
+      </div>
+
+      <!-- Constraints -->
+      <div class="field-group">
+        <label class="field-label" for="constraints">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Constraints <span class="required">*</span>
+        </label>
+        <p class="field-hint">Time limits, technical limitations, stakeholder requirements, budget.</p>
+        <textarea id="constraints" class="field-textarea" placeholder="e.g. 6-week timeline. Legacy payment API couldn't be changed. Had to maintain brand parity with desktop. No A/B testing infrastructure — single rollout only."></textarea>
+      </div>
+
+      <!-- Decisions -->
+      <div class="field-group">
+        <label class="field-label" for="decisions">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          Key Design Decisions <span class="required">*</span>
+        </label>
+        <p class="field-hint">The pivotal choices you made and why you made them.</p>
+        <textarea id="decisions" class="field-textarea" placeholder="e.g. Reduced steps from 9 to 4 by consolidating shipping + billing. Added a sticky progress bar. Chose a single-page scroll pattern over modals. Deprioritised account creation until post-purchase."></textarea>
+      </div>
+
+      <!-- Optional fields -->
+      <div class="optional-section">
+        <button class="optional-toggle" id="optionalToggle" onclick="toggleOptional()">
+          <span>Optional details (role, timeline, tools…)</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="optional-body" id="optionalBody">
+          <div class="optional-grid">
+            <div class="field-group">
+              <label class="field-label" for="role">Your Role</label>
+              <input type="text" id="role" class="field-input" placeholder="Lead Product Designer">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="timeline">Timeline</label>
+              <input type="text" id="timeline" class="field-input" placeholder="6 weeks">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="team">Team</label>
+              <input type="text" id="team" class="field-input" placeholder="2 designers, 4 engineers">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="tools">Tools</label>
+              <input type="text" id="tools" class="field-input" placeholder="Figma, Maze, FullStory">
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="context">Additional Context</label>
+            <textarea id="context" class="field-textarea" placeholder="Industry, company size, target users, existing outcomes — anything that adds colour."></textarea>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /panel-body -->
+
+    <div class="panel-footer">
+      <div class="error-banner" id="errorBanner"></div>
+      <button class="btn-generate" id="generateBtn" onclick="generate()">
+        <div class="btn-shine"></div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Generate Case Study
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Right: Output Panel ── -->
+  <section class="output-panel" id="outputPanel">
+
+    <!-- Empty state -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">✦</div>
+      <h2 class="empty-title">10-Pillar Case Study</h2>
+      <p class="empty-sub">Fill in your project details on the left and hit Generate. Claude will write a complete case study structured across all 10 UX pillars.</p>
+      <div class="pillar-list">
+        <div class="pillar-item"><span class="pill-num">01</span> Problem Statement</div>
+        <div class="pillar-item"><span class="pill-num">02</span> Research & Discovery</div>
+        <div class="pillar-item"><span class="pill-num">03</span> Key Insights</div>
+        <div class="pillar-item"><span class="pill-num">04</span> Design Process</div>
+        <div class="pillar-item"><span class="pill-num">05</span> Solution & Design</div>
+        <div class="pillar-item"><span class="pill-num">06</span> AI Design Decisions</div>
+        <div class="pillar-item"><span class="pill-num">07</span> Accessibility</div>
+        <div class="pillar-item"><span class="pill-num">08</span> Results & Impact</div>
+        <div class="pillar-item"><span class="pill-num">09</span> Reflections</div>
+        <div class="pillar-item"><span class="pill-num">10</span> About the Designer</div>
+      </div>
+    </div>
+
+    <!-- Generating state -->
+    <div class="generating-view" id="generatingView">
+      <div class="gen-header-bar">
+        <h2 class="gen-title">Generating your case study…</h2>
+        <div class="gen-status">
+          <div class="spinner"></div>
+          <span id="genStatusText">Thinking</span>
+        </div>
+      </div>
+
+      <div class="thinking-box" id="thinkingBox">
+        <span id="thinkingText"></span><span class="thinking-cursor"></span>
+      </div>
+
+      <div class="progress-pillars" id="progressPillars"></div>
+    </div>
+
+    <!-- Results state -->
+    <div class="results-view" id="resultsView">
+      <div class="results-header">
+        <div class="results-title-block">
+          <h2 class="results-main-title" id="resultsCaseTitle">Your Case Study</h2>
+          <p class="results-sub" id="resultsSub">Generated · Ready to open in the Builder</p>
+        </div>
+        <div class="results-actions">
+          <button class="btn-secondary" onclick="regenerate()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+            Regenerate
+          </button>
+          <button class="btn-primary" onclick="openInBuilder()">
+            Open in Builder
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="pillars-grid" id="pillarsGrid"></div>
+    </div>
+
+  </section>
+</div>
+
+<script src="generator.js"></script>
+</body>
+</html>
